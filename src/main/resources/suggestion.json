@@ -1,0 +1,35 @@
+{
+  "properties": [
+    {
+      "name": "test.aaaa",
+      "type": "这儿是类型",
+      "description": "描述太长了",
+      "defaultValue": "这个是默认值,但是不会填充，只会提示",
+      "isAppendColon": true
+    },
+    {
+      "name": "test.qwer",
+      "type": "也可以是描述",
+      "description": "描述太长了",
+      "defaultValue": "是的啊奥德赛"
+    },
+    {
+      "name": "test.asdf.ccc",
+      "type": "这儿是类型",
+      "description": "描述太长了",
+      "defaultValue": "这个是默认值,但是不会填充，只会提示"
+    },
+    {
+      "name": "test.asdf.zzz",
+      "type": "这儿是类型",
+      "description": "真的是描述",
+      "defaultValue": true
+    },
+    {
+      "name": "spring",
+      "type": "加班累啊",
+      "description": "这儿是描述",
+      "defaultValue": false
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+- Bump version in `build.gradle` file
+- Update `CHANGELOG.md` with release notes
+- `./gradlew clean buildPlugin`
+- `git add .` will stage all local changes for commit
+- `git commit -m <Changes>` will commit to local git repo
+- `git tag -a <version> -m "<Release notes>"` will create tag with the latest version
+- `git push && git push origin <version>` will push both the code & the tags to github
+- `./gradlew publishPlugin` will publish to jetbrains plugin repo

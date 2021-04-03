@@ -1,0 +1,63 @@
+<idea-plugin url="https://github.com/llliusong">
+
+    <id>com.pine.fast.plugin</id>
+    <name>yaml插件</name>
+    <!-- Will be auto populated by plugin -->
+    <version>1.0.0</version>
+    <vendor email="570520260@qq.com" url="http://1ton.in/">Development Team @ 1Ton Technologies</vendor>
+
+    <!-- Will be auto populated by plugin -->
+    <description>基于fasttest自定义的一款代码补全插件</description>
+    <change-notes/>
+
+    <idea-version since-build="172"/>
+
+    <depends>com.intellij.modules.java</depends>
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lang</depends>
+    <depends>org.jetbrains.plugins.yaml</depends>
+    <depends>com.intellij.properties</depends>
+
+
+<!--    <applicationListeners>-->
+<!--        <listener class="com.shetline.lligatures.LigaturesLimited" topic="com.intellij.ide.AppLifecycleListener"/>-->
+<!--    </applicationListeners>-->
+
+    <extensions defaultExtensionNs="com.intellij">
+        <completion.contributor language="yaml"
+                                implementationClass="com.pine.fast.plugin.suggestion.completion.YamlCompletionContributor"/>
+
+        <documentationProvider
+                implementation="com.pine.fast.plugin.suggestion.completion.YamlDocumentationProvider"/>
+
+        <projectService
+                serviceInterface="com.pine.fast.plugin.suggestion.service.SuggestionService"
+                serviceImplementation="com.pine.fast.plugin.suggestion.service.SuggestionServiceImpl"/>
+    </extensions>
+
+
+<!--    <application-components>-->
+<!--        <component>-->
+<!--            <interface-class>-->
+<!--                com.pine.fast.plugin.suggestion.component.InItstrap-->
+<!--            </interface-class>-->
+<!--            <implementation-class>-->
+<!--                com.pine.fast.plugin.suggestion.component.InItstrapImpl-->
+<!--            </implementation-class>-->
+<!--        </component>-->
+
+<!--    </application-components>-->
+
+    <project-components>
+        <component>
+            <interface-class>
+                com.pine.fast.plugin.suggestion.component.InItstrap
+            </interface-class>
+            <implementation-class>
+                com.pine.fast.plugin.suggestion.component.InItstrapImpl
+            </implementation-class>
+        </component>
+    </project-components>
+
+
+</idea-plugin>
