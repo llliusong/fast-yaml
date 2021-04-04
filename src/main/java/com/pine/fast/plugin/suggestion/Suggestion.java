@@ -28,6 +28,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
@@ -65,7 +66,7 @@ public class Suggestion implements Comparable<Suggestion> {
                     }
 
                     String shortDescription;
-                    if (suggestion.defaultValue != null) {
+                    if (StringUtils.isNotEmpty(suggestion.defaultValue)) {
                         shortDescription = shortenTextWithEllipsis(suggestion.defaultValue, 60, 0, true);
                         TextAttributes attrs =
                                 EditorColorsManager.getInstance().getGlobalScheme().getAttributes(SCALAR_TEXT);
@@ -73,7 +74,7 @@ public class Suggestion implements Comparable<Suggestion> {
                         presentation.setTailText(" (" + shortDescription + ")", attrs.getForegroundColor());
                     }
 
-                    if (suggestion.description != null) {
+                    if (StringUtils.isNotEmpty(suggestion.description)) {
                         presentation
                                 .appendTailText(" " + getFirstSentenceWithoutDot(suggestion.description),
                                         true);

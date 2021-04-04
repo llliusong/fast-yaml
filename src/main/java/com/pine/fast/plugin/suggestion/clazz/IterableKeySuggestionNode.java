@@ -39,9 +39,8 @@ class IterableKeySuggestionNode implements SuggestionNode {
     }
 
     @Override
-    public SortedSet<Suggestion> findKeySuggestionsForQueryPrefix2(Module module, FileType fileType,
-                                                                   List<SuggestionNode> matchesRootTillMe, int numOfAncestors, String querySegmentPrefixes,
-                                                                   int querySegmentPrefixStartIndex, @Nullable Set<String> siblingsToExclude, String prefix) {
+    public SortedSet<Suggestion> findKeySuggestionsForContains(Module module, FileType fileType,
+                                                               List<SuggestionNode> matchesRootTillMe, int numOfAncestors, String querySegmentPrefixes) {
 
         return null;
     }

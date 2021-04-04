@@ -1,6 +1,7 @@
 package com.pine.fast.plugin.misc;
 
-import static com.intellij.openapi.util.IconLoader.getIcon;
+
+import com.intellij.openapi.util.IconLoader;
 
 import javax.swing.Icon;
 
@@ -11,5 +12,5 @@ import javax.swing.Icon;
  */
 public class Icons {
 
-    public static final Icon DEFAULT_ICON = getIcon("/boot.png", Icons.class);
+    public static final Icon DEFAULT_ICON = IconLoader.getIcon("/boot.png", Icons.class);
 }

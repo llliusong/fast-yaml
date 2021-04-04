@@ -67,10 +67,8 @@ public interface SuggestionNode
                                                            List<SuggestionNode> matchesRootTillMe, int numOfAncestors, String[] querySegmentPrefixes,
                                                            int querySegmentPrefixStartIndex, @Nullable Set<String> siblingsToExclude);
 
-    SortedSet<Suggestion> findKeySuggestionsForQueryPrefix2(Module module, FileType fileType,
-                                                            List<SuggestionNode> matchesRootTillMe, int numOfAncestors, String querySegmentPrefixes,
-                                                            int querySegmentPrefixStartIndex, @Nullable Set<String> siblingsToExclude, String prefix);
-
+    SortedSet<Suggestion> findKeySuggestionsForContains(Module module, FileType fileType,
+                                                            List<SuggestionNode> matchesRootTillMe, int numOfAncestors, String querySegmentPrefixes);
 
     @Nullable
     String getNameForDocumentation(Module module);

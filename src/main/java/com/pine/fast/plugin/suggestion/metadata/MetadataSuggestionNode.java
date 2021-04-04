@@ -44,11 +44,10 @@ public abstract class MetadataSuggestionNode implements SuggestionNode {
                 querySegmentPrefixes, querySegmentPrefixStartIndex, null);
     }
 
-    public SortedSet<Suggestion> findKeySuggestionsForQueryPrefix2(Module module, FileType fileType,
-                                                                   List<SuggestionNode> matchesRootTillMe, int numOfAncestors, String querySegmentPrefixes,
-                                                                   int querySegmentPrefixStartIndex, String prefix) {
-        return findKeySuggestionsForQueryPrefix2(module, fileType, matchesRootTillMe, numOfAncestors,
-                querySegmentPrefixes, querySegmentPrefixStartIndex, null, prefix);
+    public SortedSet<Suggestion> findKeySuggestionsForQueryPrefix(Module module, FileType fileType,
+                                                                   List<SuggestionNode> matchesRootTillMe, int numOfAncestors, String querySegmentPrefixes) {
+        return findKeySuggestionsForContains(module, fileType, matchesRootTillMe, numOfAncestors,
+                querySegmentPrefixes);
     }
 
 

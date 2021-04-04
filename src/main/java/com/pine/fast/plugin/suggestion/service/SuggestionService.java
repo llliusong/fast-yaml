@@ -53,6 +53,6 @@ public interface SuggestionService {
     @Nullable
     List<LookupElementBuilder> findSuggestionsForQueryPrefix(Project project, Module module,
                                                              FileType fileType, PsiElement element, @Nullable List<String> ancestralKeys,
-                                                             String queryWithDotDelimitedPrefixes, @Nullable Set<String> siblingsToExclude);
+                                                             String queryWithDotDelimitedPrefixes, String pre,@Nullable Set<String> siblingsToExclude);
 
 }

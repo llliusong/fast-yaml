@@ -5,7 +5,6 @@ import static java.util.Objects.requireNonNull;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionProvider;
 import com.intellij.codeInsight.completion.CompletionResultSet;
-import com.intellij.codeInsight.completion.PrefixMatcher;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
@@ -21,6 +20,9 @@ import gnu.trove.THashSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
+
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
@@ -99,16 +101,19 @@ class YamlCompletionProvider extends CompletionProvider<CompletionParameters> {
             context = requireNonNull(context).getParent();
         } while (context != null);
 
+        String pre = queryWithDotDelimitedPrefixes;
+        boolean contains = pre.contains("$.");
+        if (contains) {
+            pre = "$." + StringUtils.substringAfterLast(pre, "$.");
+        }
+
         suggestions = service
                 .findSuggestionsForQueryPrefix(project, module, FileType.yaml, element, ancestralKeys,
-                        queryWithDotDelimitedPrefixes, siblingsToExclude);
+                        queryWithDotDelimitedPrefixes, pre, siblingsToExclude);
 
         if (suggestions != null) {
-//            CompletionResultSet re = resultSet.withPrefixMatcher("$.getText()");
-//            suggestions.forEach(s -> {
-//                resultSet.addElement(s);
-//            });
-            suggestions.forEach(resultSet::addElement);
+            Consumer<LookupElementBuilder> addElement = contains ?  resultSet.withPrefixMatcher(pre)::addElement :resultSet::addElement;
+            suggestions.forEach(addElement);
         }
     }
 

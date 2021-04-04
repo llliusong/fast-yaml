@@ -1545,71 +1545,71 @@
             "originalName":"sendKeys('', '')"
         },
         {
-            "name":"$.sendKeys.id",
+            "name":"sendKeys.id",
             "type":"selenium",
             "description":"指定id元素输入对应值",
             "defaultValue":"",
             "isAppendColon":false,
-            "originalName":"$.sendKeys('id=', '')"
+            "originalName":"sendKeys('id=', '')"
         },
         {
-            "name":"$.sendKeys.name",
+            "name":"sendKeys.name",
             "type":"selenium",
             "description":"指定name元素输入对应值",
             "defaultValue":"",
             "isAppendColon":false,
-            "originalName":"$.sendKeys('name=', '')"
+            "originalName":"sendKeys('name=', '')"
         },
         {
-            "name":"$.sendKeys.class",
+            "name":"sendKeys.class",
             "type":"selenium",
             "description":"指定class元素输入对应值",
             "defaultValue":"",
             "isAppendColon":false,
-            "originalName":"$.sendKeys('class=', '')"
+            "originalName":"sendKeys('class=', '')"
         },
         {
-            "name":"$.sendKeys.xpath",
+            "name":"sendKeys.xpath",
             "type":"selenium",
             "description":"指定xpath元素输入对应值",
             "defaultValue":"",
             "isAppendColon":false,
-            "originalName":"$.sendKeys('xpath=', '')"
+            "originalName":"sendKeys('xpath=', '')"
         },
         {
-            "name":"$.sendKeys.tag_name",
+            "name":"sendKeys.tag_name",
             "type":"selenium",
             "description":"指定tag_name元素输入对应值",
             "defaultValue":"",
             "isAppendColon":false,
-            "originalName":"$.sendKeys('tag_name=', '')"
+            "originalName":"sendKeys('tag_name=', '')"
         },
         {
-            "name":"$.sendKeys.link_text",
+            "name":"sendKeys.link_text",
             "type":"selenium",
             "description":"指定link_text元素输入对应值",
             "defaultValue":"",
             "isAppendColon":false,
-            "originalName":"$.sendKeys('link_text=', '')"
+            "originalName":"sendKeys('link_text=', '')"
         },
         {
-            "name":"$.sendKeys.partial_link_text",
+            "name":"sendKeys.partial_link_text",
             "type":"selenium",
             "description":"指定partial_link_text元素输入对应值",
             "defaultValue":"",
             "isAppendColon":false,
-            "originalName":"$.sendKeys('partial_link_text=', '')"
+            "originalName":"sendKeys('partial_link_text=', '')"
         },
         {
-            "name":"$.sendKeys.css_selector",
+            "name":"sendKeys.css_selector",
             "type":"selenium",
             "description":"指定css_selector元素输入对应值",
             "defaultValue":"",
             "isAppendColon":false,
-            "originalName":"$.sendKeys('css_selector=', '')"
+            "originalName":"sendKeys('css_selector=', '')"
         },
         {
-            "name":"clear('')",
+            "name":"clear",
             "type":"selenium",
             "description":"元素清除数据或状态",
             "defaultValue":"",
@@ -1617,68 +1617,68 @@
             "originalName":"clear('')"
         },
         {
-            "name":"$.clear.id",
+            "name":"clear.id",
             "type":"selenium",
             "description":"指定id元素清除数据或状态",
             "defaultValue":"",
             "isAppendColon":false,
-            "originalName":"$.clear('id=')"
+            "originalName":"clear('id=')"
         },
         {
-            "name":"$.clear.name",
+            "name":"clear.name",
             "type":"selenium",
             "description":"指定name元素清除数据或状态",
             "defaultValue":"",
             "isAppendColon":false,
-            "originalName":"$.clear('name=')"
+            "originalName":"clear('name=')"
         },
         {
-            "name":"$.clear.class",
+            "name":"clear.class",
             "type":"selenium",
             "description":"指定class元素清除数据或状态",
             "defaultValue":"",
             "isAppendColon":false,
-            "originalName":"$.clear('class=')"
+            "originalName":"clear('class=')"
         },
         {
-            "name":"$.clear.xpath",
+            "name":"clear.xpath",
             "type":"selenium",
             "description":"指定xpath元素清除数据或状态",
             "defaultValue":"",
             "isAppendColon":false,
-            "originalName":"$.clear('xpath=')"
+            "originalName":"clear('xpath=')"
         },
         {
-            "name":"$.clear.tag_name",
+            "name":"clear.tag_name",
             "type":"selenium",
             "description":"指定tag_name元素清除数据或状态",
             "defaultValue":"",
             "isAppendColon":false,
-            "originalName":"$.clear('tag_name=')"
+            "originalName":"clear('tag_name=')"
         },
         {
-            "name":"$.clear.link_text",
+            "name":"clear.link_text",
             "type":"selenium",
             "description":"指定link_text元素清除数据或状态",
             "defaultValue":"",
             "isAppendColon":false,
-            "originalName":"$.clear('link_text=')"
+            "originalName":"clear('link_text=')"
         },
         {
-            "name":"$.clear.partial_link_text",
+            "name":"clear.partial_link_text",
             "type":"selenium",
             "description":"指定partial_link_text元素清除数据或状态",
             "defaultValue":"",
             "isAppendColon":false,
-            "originalName":"$.clear('partial_link_text=')"
+            "originalName":"clear('partial_link_text=')"
         },
         {
-            "name":"$.clear.css_selector",
+            "name":"clear.css_selector",
             "type":"selenium",
             "description":"指定css_selector元素清除数据或状态",
             "defaultValue":"",
             "isAppendColon":false,
-            "originalName":"$.clear('css_selector=')"
+            "originalName":"clear('css_selector=')"
         },
         {
             "name":"maxWindow",

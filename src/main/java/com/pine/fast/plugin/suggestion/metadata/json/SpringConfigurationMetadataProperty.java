@@ -14,6 +14,7 @@ import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiType;
 import com.pine.fast.plugin.misc.GenericUtil;
+import com.pine.fast.plugin.misc.Icons;
 import com.pine.fast.plugin.misc.PsiCustomUtil;
 import com.pine.fast.plugin.suggestion.clazz.MapClassMetadataProxy;
 import com.pine.fast.plugin.suggestion.clazz.MetadataProxy;
@@ -213,7 +214,8 @@ public class SpringConfigurationMetadataProperty
                 .defaultValue(getDefaultValueAsStr())
                 .numOfAncestors(numOfAncestors)
                 .matchesTopFirst(matchesRootTillMe)
-                .icon(getSuggestionNodeType(module).getIcon())
+//                .icon(getSuggestionNodeType(module).getIcon())
+                .icon(Icons.DEFAULT_ICON)
                 .isAppendColon(isAppendColon);
         if (deprecation != null) {
             builder.deprecationLevel(deprecation.getLevel() != null ?
@@ -551,9 +553,8 @@ public class SpringConfigurationMetadataProperty
         }
 
         @Override
-        public SortedSet<Suggestion> findKeySuggestionsForQueryPrefix2(Module module, FileType fileType,
-                                                                       List<SuggestionNode> matchesRootTillMe, int numOfAncestors, String querySegmentPrefixes,
-                                                                       int querySegmentPrefixStartIndex, @Nullable Set<String> siblingsToExclude, String prefix) {
+        public SortedSet<Suggestion> findKeySuggestionsForContains(Module module, FileType fileType,
+                                                                  List<SuggestionNode> matchesRootTillMe, int numOfAncestors, String querySegmentPrefixes) {
 
             return null;
         }

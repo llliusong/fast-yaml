@@ -201,7 +201,7 @@ public class SuggestionServiceImpl implements SuggestionService {
 
             try {
                 // TODO: pine 2021/3/31 通过本地配置 + 外部配置实现
-                InputStream inputStream = getClass().getResourceAsStream("/suggestion1.json");
+                InputStream inputStream = getClass().getResourceAsStream("/suggestion.json");
                 GsonBuilder gsonBuilder = new GsonBuilder();
                 // register custom mapper adapters
                 gsonBuilder.registerTypeAdapter(SpringConfigurationMetadataValueProviderType.class,
@@ -254,7 +254,7 @@ public class SuggestionServiceImpl implements SuggestionService {
     @Override
     public List<LookupElementBuilder> findSuggestionsForQueryPrefix(Project project, Module module,
                                                                     FileType fileType, PsiElement element, @Nullable List<String> ancestralKeys,
-                                                                    String queryWithDotDelimitedPrefixes, @Nullable Set<String> siblingsToExclude) {
+                                                                    String queryWithDotDelimitedPrefixes, String pre, @Nullable Set<String> siblingsToExclude) {
 //    return doFindSuggestionsForQueryPrefix(module,
 //        moduleNameToRootSearchIndex.get(module.getName()), fileType, element, ancestralKeys,
 //        queryWithDotDelimitedPrefixes, siblingsToExclude);
@@ -291,8 +291,7 @@ public class SuggestionServiceImpl implements SuggestionService {
 //        List<LookupElementBuilder> lookupElementBuilders = toLookupElementBuilders(suggestions);
 
         List<LookupElementBuilder> lookupElementBuilders = doFindSuggestions(module,
-                moduleNameToRootSearchIndex.get(SIMPLE_NAME), fileType, element, ancestralKeys,
-                queryWithDotDelimitedPrefixes, siblingsToExclude);
+                moduleNameToRootSearchIndex.get(SIMPLE_NAME), fileType, pre);
 
         List<LookupElementBuilder> lookupElementBuilder = doFindSuggestionsForQueryPrefix(module,
                 moduleNameToRootSearchIndex.get(MODULE_NAME), fileType, element, ancestralKeys,
@@ -350,24 +349,15 @@ public class SuggestionServiceImpl implements SuggestionService {
     }
 
     private List<LookupElementBuilder> doFindSuggestions(Module module,
-                                                         Trie<String, MetadataSuggestionNode> rootSearchIndex, FileType fileType, PsiElement element,
-                                                         @Nullable List<String> ancestralKeys, String queryWithDotDelimitedPrefixes,
-                                                         @Nullable Set<String> siblingsToExclude) {
+                                                         Trie<String, MetadataSuggestionNode> rootSearchIndex, FileType fileType, String queryWithDotDelimitedPrefixes) {
         String finalQueryWithDotDelimitedPrefixes = queryWithDotDelimitedPrefixes;
         debug(() -> log.debug("Search requested for " + finalQueryWithDotDelimitedPrefixes));
         StopWatch timer = new StopWatch();
         timer.start();
         try {
-            String prefix = null;
-            String pre = queryWithDotDelimitedPrefixes;
-            boolean contains = queryWithDotDelimitedPrefixes.contains("$.");
-            if (contains) {
-//                prefix = StringUtils.substringBeforeLast(queryWithDotDelimitedPrefixes, "$.");
-                prefix = "";
-                queryWithDotDelimitedPrefixes = "$." + StringUtils.substringAfterLast(pre, "$.");
-            }
             // 简单匹配只需要对顶层进行查询
-            Set<Suggestion> suggestions = doFindSuggestionsForQueryPrefix2(module, fileType, rootSearchIndex.values(), queryWithDotDelimitedPrefixes, 0, prefix);
+            Set<Suggestion> suggestions = doFindSuggestionsForQueryPrefix2(module, fileType, rootSearchIndex.values(), queryWithDotDelimitedPrefixes);
+
 
             if (suggestions != null) {
                 return toLookupElementBuilders(suggestions);
@@ -472,13 +462,12 @@ public class SuggestionServiceImpl implements SuggestionService {
     }
 
     private Set<Suggestion> doFindSuggestionsForQueryPrefix2(Module module, FileType fileType,
-                                                             Collection<MetadataSuggestionNode> nodesToSearchWithin, String queryWithDotDelimitedPrefixes,
-                                                             int querySegmentPrefixStartIndex, String prefix) {
+                                                             Collection<MetadataSuggestionNode> nodesToSearchWithin, String queryWithDotDelimitedPrefixes) {
         Set<Suggestion> suggestions = null;
         for (MetadataSuggestionNode suggestionNode : nodesToSearchWithin) {
             Set<Suggestion> matchedSuggestions = suggestionNode
-                    .findKeySuggestionsForQueryPrefix2(module, fileType, GenericUtil.modifiableList(suggestionNode), 0,
-                            queryWithDotDelimitedPrefixes, querySegmentPrefixStartIndex, prefix);
+                    .findKeySuggestionsForQueryPrefix(module, fileType, GenericUtil.modifiableList(suggestionNode), 0,
+                            queryWithDotDelimitedPrefixes);
 
             if (matchedSuggestions != null) {
                 if (suggestions == null) {
