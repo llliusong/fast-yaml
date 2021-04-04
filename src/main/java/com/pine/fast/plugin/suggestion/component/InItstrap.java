@@ -4,7 +4,7 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 
 /**
- * åˆå§‹åŒ–å¼•å¯¼é¡¹ç›®
+ * ³õÊ¼»¯Òıµ¼ÏîÄ¿
  *
  * @author pine
  */

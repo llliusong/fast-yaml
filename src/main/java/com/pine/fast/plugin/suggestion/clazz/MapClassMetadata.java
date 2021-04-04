@@ -236,6 +236,14 @@ public class MapClassMetadata extends ClassMetadata {
         MapKeySuggestionNode(SuggestionDocumentationHelper helper) {
             this.helper = helper;
         }
+        @Override
+        public SortedSet<Suggestion> findKeySuggestionsForQueryPrefix2(Module module, FileType fileType,
+                                                                       List<SuggestionNode> matchesRootTillMe, int numOfAncestors, String querySegmentPrefixes,
+                                                                       int querySegmentPrefixStartIndex, @Nullable Set<String> siblingsToExclude, String prefix) {
+
+            return null;
+        }
+
 
         @Nullable
         @Override

@@ -34,6 +34,11 @@ public class SpringConfigurationMetadataGroup {
     @NotNull
     private SuggestionNodeType nodeType = SuggestionNodeType.UNDEFINED;
 
+    /**
+     * 是否追加冒号
+     */
+    private Boolean isAppendColon;
+
     public String getDocumentation(String nodeNavigationPathDotDelimited) {
         // Format for the documentation is as follows
         /*

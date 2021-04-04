@@ -41,6 +41,11 @@ public class SpringConfigurationMetadataHint implements com.pine.fast.plugin.sug
     private Trie<String, SpringConfigurationMetadataHintValue> valueTrie;
 
     /**
+     * 是否追加冒号
+     */
+    private Boolean isAppendColon;
+
+    /**
      * If the property that corresponds with this hint represents a map, Hint's key would be end with `.keys`/`.values`
      *
      * @return property name that corresponds to this hint

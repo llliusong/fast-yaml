@@ -15,7 +15,9 @@ import com.pine.fast.plugin.misc.PsiCustomUtil;
 import com.pine.fast.plugin.suggestion.OriginalNameProvider;
 import com.pine.fast.plugin.suggestion.Suggestion;
 import com.pine.fast.plugin.suggestion.SuggestionNodeType;
+
 import java.util.List;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.YAMLElementGenerator;
 import org.jetbrains.yaml.YAMLTokenTypes;
@@ -124,12 +126,13 @@ public class YamlKeyInsertHandler implements InsertHandler<LookupElement> {
         List<? extends OriginalNameProvider> matchesTopFirst = suggestion.getMatchesForReplacement();
         do {
             OriginalNameProvider nameProvider = matchesTopFirst.get(i);
-            // TODO: pine 读取配置，获取是否追加:
-//      builder.append("\n").append(existingIndentation).append(getIndent(indentPerLevel, i))
-//          .append(nameProvider.getOriginalName()).append(":");
 
             builder.append("\n").append(existingIndentation).append(GenericUtil.getIndent(indentPerLevel, i))
                     .append(nameProvider.getOriginalName());
+            // 根据配置，获取是否在敲击回车后追加：
+            if (suggestion.getIsAppendColon()) {
+                builder.append(":");
+            }
             i++;
         } while (i < matchesTopFirst.size());
         builder.delete(0, existingIndentation.length() + 1);

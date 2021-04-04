@@ -1,6 +1,7 @@
 package com.pine.fast.plugin.suggestion.service;
 
 import static com.intellij.openapi.application.ApplicationManager.getApplication;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -20,7 +21,6 @@ import com.intellij.openapi.roots.OrderEnumerator;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.pine.fast.plugin.misc.GenericUtil;
-import com.pine.fast.plugin.misc.Icons;
 import com.pine.fast.plugin.suggestion.metadata.MetadataContainerInfo;
 import com.pine.fast.plugin.suggestion.metadata.MetadataNonPropertySuggestionNode;
 import com.pine.fast.plugin.suggestion.metadata.MetadataPropertySuggestionNode;
@@ -37,13 +37,13 @@ import com.pine.fast.plugin.suggestion.metadata.json.SpringConfigurationMetadata
 import com.pine.fast.plugin.suggestion.metadata.json.SpringConfigurationMetadataValueProviderType;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -51,13 +51,17 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.concurrent.Future;
 import javax.annotation.Nullable;
+
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Trie;
 import org.apache.commons.collections4.trie.PatriciaTrie;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.StopWatch;
 
 public class SuggestionServiceImpl implements SuggestionService {
 
     private final static String MODULE_NAME = "yaml";
+    private final static String SIMPLE_NAME = "simple";
 
     private static final Logger log = Logger.getInstance(SuggestionServiceImpl.class);
 
@@ -79,6 +83,12 @@ public class SuggestionServiceImpl implements SuggestionService {
         isHint = true;
     }
 
+    /**
+     * ∏˘æ› ∂∫∫≈  ∑÷∏ÙŒ™ ˝◊È
+     *
+     * @param element
+     * @return
+     */
     private static String[] toSanitizedPathSegments(String element) {
         String[] splits = element.trim().split(Suggestion.PERIOD_DELIMITER, -1);
         for (int i = 0; i < splits.length; i++) {
@@ -180,26 +190,33 @@ public class SuggestionServiceImpl implements SuggestionService {
 
     private void initSearchIndex(Module module) {
         Trie<String, MetadataSuggestionNode> rootSearchIndex = moduleNameToRootSearchIndex.get(MODULE_NAME);
+        Trie<String, MetadataSuggestionNode> simpleSearchIndex = moduleNameToRootSearchIndex.get(SIMPLE_NAME);
+
         if (rootSearchIndex == null) {
             rootSearchIndex = new PatriciaTrie<>();
+            simpleSearchIndex = new PatriciaTrie<>();
             moduleNameToRootSearchIndex.put(MODULE_NAME, rootSearchIndex);
+            moduleNameToRootSearchIndex.put(SIMPLE_NAME, simpleSearchIndex);
+
+
             try {
-                // TODO: pine 2021/3/31 ÈÄöËøáÊú¨Âú∞ÈÖçÁΩÆ + Â§ñÈÉ®ÈÖçÁΩÆÂÆûÁé∞
-                InputStream inputStream = getClass().getResourceAsStream("/suggestion.json");
+                // TODO: pine 2021/3/31 Õ®π˝±æµÿ≈‰÷√ + Õ‚≤ø≈‰÷√ µœ÷
+                InputStream inputStream = getClass().getResourceAsStream("/suggestion1.json");
                 GsonBuilder gsonBuilder = new GsonBuilder();
                 // register custom mapper adapters
                 gsonBuilder.registerTypeAdapter(SpringConfigurationMetadataValueProviderType.class,
                         new SpringConfigurationMetadataValueProviderTypeDeserializer());
                 gsonBuilder.registerTypeAdapterFactory(new GsonPostProcessEnablingTypeFactory());
                 SpringConfigurationMetadata springConfigurationMetadata = gsonBuilder.create()
-                        .fromJson(new BufferedReader(new InputStreamReader(inputStream)),
+                        .fromJson(new BufferedReader(new InputStreamReader(inputStream, UTF_8)),
                                 SpringConfigurationMetadata.class);
 
                 addPropertiesToIndex(module, rootSearchIndex, springConfigurationMetadata, "test");
                 addHintsToIndex(module, rootSearchIndex, springConfigurationMetadata, "hintTest");
+                addSimplesToIndex(module, simpleSearchIndex, springConfigurationMetadata, "simpleTest");
                 System.out.println(rootSearchIndex);
             } catch (Exception e) {
-                log.error("ÂàùÂßãÂåñÊêúÁ¥¢Á¥¢ÂºïÂ§±Ë¥•");
+                log.error("≥ı ºªØÀ—À˜À˜“˝ ß∞‹");
             }
 
         }
@@ -243,41 +260,51 @@ public class SuggestionServiceImpl implements SuggestionService {
 //        queryWithDotDelimitedPrefixes, siblingsToExclude);
         initSearchIndex(module);
 
-        // TODO: pine ÊûÑÂª∫ËäÇÁÇπÊü•ÊâæÊ†ëÔºå‰ΩøÁî®Ëá™ÂÆö‰πâÊü•Êâæ
-        SpringConfigurationMetadataProperty property = new SpringConfigurationMetadataProperty();
-        property.setName("configProperty");
-
-        // ÊåâÂõûËΩ¶‰πãÂêéÁöÑËá≥
-        MetadataPropertySuggestionNode suggestionNode = new MetadataPropertySuggestionNode();
-        suggestionNode.setName("nodeName");
-        suggestionNode.setOriginalName("ÂõûËΩ¶ÁöÑÂÄº()");
-        suggestionNode.setProperty(property);
-
-        ArrayList<MetadataPropertySuggestionNode> arrayList = new ArrayList<>();
-        arrayList.add(suggestionNode);
-
-        // ÊòæÁ§∫Âª∫ËÆÆ
-        Suggestion suggestion = Suggestion.builder()
-                .suggestionToDisplay("test")
-                .description("ÊèèËø∞")
-                .defaultValue("ÈªòËÆ§ÂÄº")
-                .shortType("shortType")
-                .icon(Icons.DEFAULT_ICON)
-                .matchesTopFirst(arrayList)
-                .fileType(FileType.yaml)
-                .build();
-
-        Set<Suggestion> suggestions = new HashSet<>();
-        suggestions.add(suggestion);
+//        // TODO: pine ππΩ®Ω⁄µ„≤È’“ ˜£¨ π”√◊‘∂®“Â≤È’“
+//        SpringConfigurationMetadataProperty property = new SpringConfigurationMetadataProperty();
+//        property.setName("configProperty");
+//
+//        // ∞¥ªÿ≥µ÷Æ∫Ûµƒ÷¡
+//        MetadataPropertySuggestionNode suggestionNode = new MetadataPropertySuggestionNode();
+//        suggestionNode.setName("nodeName");
+//        suggestionNode.setOriginalName("click('id = ')");
+//        suggestionNode.setProperty(property);
+//
+//        ArrayList<MetadataPropertySuggestionNode> arrayList = new ArrayList<>();
+//        arrayList.add(suggestionNode);
+//
+//        // œ‘ æΩ®“È
+//        Suggestion suggestion = Suggestion.builder()
+//                .suggestionToDisplay("clickid")
+//                .description("µ„ª˜ƒ≥∏ˆ‘™Àÿ")
+//                .defaultValue("id = ''")
+//                .shortType("shortType")
+//                .icon(Icons.DEFAULT_ICON)
+//                .matchesTopFirst(arrayList)
+//                .fileType(FileType.yaml)
+//                .isAppendColon(false)
+//                .build();
+//
+//        Set<Suggestion> suggestions = new HashSet<>();
+//        suggestions.add(suggestion);
         //
-        List<LookupElementBuilder> lookupElementBuilders = toLookupElementBuilders(suggestions);
+//        List<LookupElementBuilder> lookupElementBuilders = toLookupElementBuilders(suggestions);
+
+        List<LookupElementBuilder> lookupElementBuilders = doFindSuggestions(module,
+                moduleNameToRootSearchIndex.get(SIMPLE_NAME), fileType, element, ancestralKeys,
+                queryWithDotDelimitedPrefixes, siblingsToExclude);
 
         List<LookupElementBuilder> lookupElementBuilder = doFindSuggestionsForQueryPrefix(module,
                 moduleNameToRootSearchIndex.get(MODULE_NAME), fileType, element, ancestralKeys,
                 queryWithDotDelimitedPrefixes, siblingsToExclude);
-        if (lookupElementBuilder != null && lookupElementBuilder.size() > 0) {
-            lookupElementBuilders.addAll(lookupElementBuilder);
+
+        if (CollectionUtils.isEmpty(lookupElementBuilders)) {
+            return lookupElementBuilder;
         }
+        if (CollectionUtils.isEmpty(lookupElementBuilder)) {
+            return lookupElementBuilders;
+        }
+        lookupElementBuilders.addAll(lookupElementBuilder);
         return lookupElementBuilders;
 
     }
@@ -320,6 +347,38 @@ public class SuggestionServiceImpl implements SuggestionService {
             debug(() -> log.debug("No (new)metadata files to index"));
         }
         return containersToProcess;
+    }
+
+    private List<LookupElementBuilder> doFindSuggestions(Module module,
+                                                         Trie<String, MetadataSuggestionNode> rootSearchIndex, FileType fileType, PsiElement element,
+                                                         @Nullable List<String> ancestralKeys, String queryWithDotDelimitedPrefixes,
+                                                         @Nullable Set<String> siblingsToExclude) {
+        String finalQueryWithDotDelimitedPrefixes = queryWithDotDelimitedPrefixes;
+        debug(() -> log.debug("Search requested for " + finalQueryWithDotDelimitedPrefixes));
+        StopWatch timer = new StopWatch();
+        timer.start();
+        try {
+            String prefix = null;
+            String pre = queryWithDotDelimitedPrefixes;
+            boolean contains = queryWithDotDelimitedPrefixes.contains("$.");
+            if (contains) {
+//                prefix = StringUtils.substringBeforeLast(queryWithDotDelimitedPrefixes, "$.");
+                prefix = "";
+                queryWithDotDelimitedPrefixes = "$." + StringUtils.substringAfterLast(pre, "$.");
+            }
+            // ºÚµ•∆•≈‰÷ª–Ë“™∂‘∂•≤„Ω¯––≤È—Ø
+            Set<Suggestion> suggestions = doFindSuggestionsForQueryPrefix2(module, fileType, rootSearchIndex.values(), queryWithDotDelimitedPrefixes, 0, prefix);
+
+            if (suggestions != null) {
+                return toLookupElementBuilders(suggestions);
+            }
+            return null;
+        } finally {
+            timer.stop();
+            debug(() -> log.debug("Search took " + timer.toString()));
+        }
+
+
     }
 
     private List<LookupElementBuilder> doFindSuggestionsForQueryPrefix(Module module,
@@ -375,7 +434,7 @@ public class SuggestionServiceImpl implements SuggestionService {
                 Collection<MetadataSuggestionNode> childNodes;
                 int querySegmentPrefixStartIndex;
 
-                // If no results are found at the top level, let dive deeper and find matches
+                // »Áπ˚‘⁄∂•≤„√ª”–’“µΩ∆•≈‰µƒkey£¨‘Ÿ∂‘∂˘◊”º∂Ω¯––∆•≈‰≤È—Ø
                 if (topLevelQueryResults == null || topLevelQueryResults.size() == 0) {
                     childNodes = rootSearchIndex.values();
                     querySegmentPrefixStartIndex = 0;
@@ -403,10 +462,32 @@ public class SuggestionServiceImpl implements SuggestionService {
                 return toLookupElementBuilders(suggestions);
             }
             return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         } finally {
             timer.stop();
             debug(() -> log.debug("Search took " + timer.toString()));
         }
+    }
+
+    private Set<Suggestion> doFindSuggestionsForQueryPrefix2(Module module, FileType fileType,
+                                                             Collection<MetadataSuggestionNode> nodesToSearchWithin, String queryWithDotDelimitedPrefixes,
+                                                             int querySegmentPrefixStartIndex, String prefix) {
+        Set<Suggestion> suggestions = null;
+        for (MetadataSuggestionNode suggestionNode : nodesToSearchWithin) {
+            Set<Suggestion> matchedSuggestions = suggestionNode
+                    .findKeySuggestionsForQueryPrefix2(module, fileType, GenericUtil.modifiableList(suggestionNode), 0,
+                            queryWithDotDelimitedPrefixes, querySegmentPrefixStartIndex, prefix);
+
+            if (matchedSuggestions != null) {
+                if (suggestions == null) {
+                    suggestions = new THashSet<>();
+                }
+                suggestions.addAll(matchedSuggestions);
+            }
+        }
+        return suggestions;
     }
 
     @Nullable
@@ -577,7 +658,8 @@ public class SuggestionServiceImpl implements SuggestionService {
                     findDeepestMetadataMatch(rootSearchIndex, pathSegments, false);
 
             int startIndex;
-            if (closestMetadata == null) { // path does not have a corresponding root element
+            if (closestMetadata == null) {
+                //  «∑Ò√ª”–◊”Ω⁄µ„£¨÷ª”–∏˘Ω⁄µ„¥Ê‘⁄
                 boolean onlyRootSegmentExists = pathSegments.length == 1;
                 if (onlyRootSegmentExists) {
                     closestMetadata = MetadataPropertySuggestionNode
@@ -588,7 +670,7 @@ public class SuggestionServiceImpl implements SuggestionService {
                 }
                 rootSearchIndex.put(pathSegments[0], closestMetadata);
 
-                // since we already handled the root level item, let addChildren start from index 1 of pathSegments
+                // “ÚŒ™Œ“√«“—æ≠¥¶¿Ì¡À∏˘º∂œÓƒø£¨À˘“‘»√addChildren¥”pathSegmentsµƒÀ˜“˝1ø™ º
                 startIndex = 1;
             } else {
                 startIndex = closestMetadata.numOfHopesToRoot() + 1;
@@ -682,6 +764,21 @@ public class SuggestionServiceImpl implements SuggestionService {
                     }
                 }
             }
+        }
+    }
+
+
+    private void addSimplesToIndex(Module module,
+                                   Trie<String, MetadataSuggestionNode> rootSearchIndex,
+                                   SpringConfigurationMetadata springConfigurationMetadata, String containerArchiveOrFileRef) {
+        List<SpringConfigurationMetadataProperty> simples =
+                springConfigurationMetadata.getSimples();
+        simples.sort(comparing(SpringConfigurationMetadataProperty::getName));
+        for (SpringConfigurationMetadataProperty simple : simples) {
+            String originalName = StringUtils.isEmpty(simple.getOriginalName()) ? simple.getName() : simple.getOriginalName();
+            MetadataSuggestionNode closestMetadata = MetadataPropertySuggestionNode
+                    .newInstance(simple.getName(), originalName, simple, null, containerArchiveOrFileRef);
+            rootSearchIndex.put(simple.getName(), closestMetadata);
         }
     }
 

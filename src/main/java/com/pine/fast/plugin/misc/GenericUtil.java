@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 
 /**
- * é€šç”¨å·¥å…·ç±»
+ * Í¨ÓÃ¹¤¾ßÀà
  *
  * @author pine
  */

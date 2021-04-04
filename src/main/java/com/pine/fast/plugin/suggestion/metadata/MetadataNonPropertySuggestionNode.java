@@ -194,6 +194,15 @@ public class MetadataNonPropertySuggestionNode extends MetadataSuggestionNode {
         return deepestMatch;
     }
 
+    @Override
+    public SortedSet<Suggestion> findKeySuggestionsForQueryPrefix2(Module module, FileType fileType,
+                                                                   List<SuggestionNode> matchesRootTillMe, int numOfAncestors, String querySegmentPrefixes,
+                                                                   int querySegmentPrefixStartIndex, @Nullable Set<String> siblingsToExclude, String prefix) {
+
+        return null;
+    }
+
+
     @Nullable
     @Override
     public List<SuggestionNode> findDeepestSuggestionNode(Module module,

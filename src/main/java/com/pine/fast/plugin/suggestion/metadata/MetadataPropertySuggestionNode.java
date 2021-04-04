@@ -8,10 +8,12 @@ import com.pine.fast.plugin.suggestion.SuggestionNodeType;
 import com.pine.fast.plugin.suggestion.completion.FileType;
 import com.pine.fast.plugin.suggestion.metadata.json.SpringConfigurationMetadataProperty;
 import gnu.trove.THashSet;
+
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import javax.annotation.Nullable;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -31,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 @AllArgsConstructor
 @ToString(of = "originalName")
 @EqualsAndHashCode(of = "name", callSuper = false)
-public class MetadataPropertySuggestionNode extends com.pine.fast.plugin.suggestion.metadata.MetadataSuggestionNode {
+public class MetadataPropertySuggestionNode extends MetadataSuggestionNode {
 
     /**
      * Sanitised name used for lookup. `-`, `_` are removed, upper cased characters are converted to lower case
@@ -45,7 +47,7 @@ public class MetadataPropertySuggestionNode extends com.pine.fast.plugin.suggest
      * Parent reference, for bidirectional navigation. Can be null for roots
      */
     @Nullable
-    private com.pine.fast.plugin.suggestion.metadata.MetadataNonPropertySuggestionNode parent;
+    private MetadataNonPropertySuggestionNode parent;
     /**
      * Set of sources these suggestions belong to
      */
@@ -62,9 +64,15 @@ public class MetadataPropertySuggestionNode extends com.pine.fast.plugin.suggest
      */
     public static MetadataPropertySuggestionNode newInstance(String originalName,
                                                              @NotNull SpringConfigurationMetadataProperty property,
-                                                             @Nullable com.pine.fast.plugin.suggestion.metadata.MetadataNonPropertySuggestionNode parent, String belongsTo) {
+                                                             @Nullable MetadataNonPropertySuggestionNode parent, String belongsTo) {
+        return newInstance(SuggestionNode.sanitise(originalName), originalName, property, parent, belongsTo);
+    }
+
+    public static MetadataPropertySuggestionNode newInstance(String name, String originalName,
+                                                             @NotNull SpringConfigurationMetadataProperty property,
+                                                             @Nullable MetadataNonPropertySuggestionNode parent, String belongsTo) {
         MetadataPropertySuggestionNode.MetadataPropertySuggestionNodeBuilder builder =
-                MetadataPropertySuggestionNode.builder().name(SuggestionNode.sanitise(originalName))
+                MetadataPropertySuggestionNode.builder().name(SuggestionNode.sanitise(name))
                         .originalName(originalName).property(property).parent(parent);
         Set<String> belongsToSet = new THashSet<>();
         belongsToSet.add(belongsTo);
@@ -108,8 +116,8 @@ public class MetadataPropertySuggestionNode extends com.pine.fast.plugin.suggest
     }
 
     @Override
-    public com.pine.fast.plugin.suggestion.metadata.MetadataSuggestionNode findDeepestMetadataNode(String[] pathSegments,
-                                                                                                   int pathSegmentStartIndex, boolean matchAllSegments) {
+    public MetadataSuggestionNode findDeepestMetadataNode(String[] pathSegments,
+                                                          int pathSegmentStartIndex, boolean matchAllSegments) {
         com.pine.fast.plugin.suggestion.metadata.MetadataSuggestionNode deepestMatch = null;
         if (!matchAllSegments) {
             deepestMatch = this;
@@ -151,16 +159,28 @@ public class MetadataPropertySuggestionNode extends com.pine.fast.plugin.suggest
                                                                   List<SuggestionNode> matchesRootTillMe, int numOfAncestors, String[] querySegmentPrefixes,
                                                                   int querySegmentPrefixStartIndex, @Nullable Set<String> siblingsToExclude) {
         if (!property.isDeprecatedError()) {
+            // querySegmentPrefixStartIndex 0表示没有找到，查找儿子节点是否匹配，标记为1已经找到了头，直接组装建议显示对象
             boolean lookingForConcreteNode = querySegmentPrefixStartIndex >= querySegmentPrefixes.length;
             if (lookingForConcreteNode) {
-                return GenericUtil.newSingleElementSortedSet(
-                        property.buildKeySuggestion(module, fileType, matchesRootTillMe, numOfAncestors));
+                return GenericUtil.newSingleElementSortedSet(property.buildKeySuggestion(module, fileType, matchesRootTillMe, numOfAncestors));
             } else {
                 if (!property.isLeaf(module)) {
                     return property.findChildKeySuggestionsForQueryPrefix(module, fileType, matchesRootTillMe,
                             numOfAncestors, querySegmentPrefixes, querySegmentPrefixStartIndex,
                             siblingsToExclude);
                 }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public SortedSet<Suggestion> findKeySuggestionsForQueryPrefix2(Module module, FileType fileType,
+                                                                  List<SuggestionNode> matchesRootTillMe, int numOfAncestors, String querySegmentPrefixes,
+                                                                  int querySegmentPrefixStartIndex, @Nullable Set<String> siblingsToExclude, String prefix) {
+        if (!property.isDeprecatedError()) {
+            if (property.getName().contains(querySegmentPrefixes)) {
+                return GenericUtil.newSingleElementSortedSet(property.buildKeySuggestion2(module, fileType, matchesRootTillMe ,prefix,numOfAncestors));
             }
         }
         return null;
