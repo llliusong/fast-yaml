@@ -11,6 +11,9 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.Stack;
 import javax.annotation.Nullable;
+
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.groovy.ant.UberCompileTask;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,6 +43,14 @@ public abstract class MetadataSuggestionNode implements SuggestionNode {
         return findKeySuggestionsForQueryPrefix(module, fileType, matchesRootTillMe, numOfAncestors,
                 querySegmentPrefixes, querySegmentPrefixStartIndex, null);
     }
+
+    public SortedSet<Suggestion> findKeySuggestionsForQueryPrefix2(Module module, FileType fileType,
+                                                                   List<SuggestionNode> matchesRootTillMe, int numOfAncestors, String querySegmentPrefixes,
+                                                                   int querySegmentPrefixStartIndex, String prefix) {
+        return findKeySuggestionsForQueryPrefix2(module, fileType, matchesRootTillMe, numOfAncestors,
+                querySegmentPrefixes, querySegmentPrefixStartIndex, null, prefix);
+    }
+
 
     @Nullable
     @Override

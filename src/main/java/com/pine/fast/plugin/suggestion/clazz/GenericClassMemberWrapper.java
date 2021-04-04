@@ -95,7 +95,16 @@ public class GenericClassMemberWrapper implements SuggestionNode, SuggestionDocu
                         querySegmentPrefixes, querySegmentPrefixStartIndex, siblingsToExclude), null);
     }
 
+    @Override
+    public SortedSet<Suggestion> findKeySuggestionsForQueryPrefix2(Module module, FileType fileType,
+                                                                   List<SuggestionNode> matchesRootTillMe, int numOfAncestors, String querySegmentPrefixes,
+                                                                   int querySegmentPrefixStartIndex, @Nullable Set<String> siblingsToExclude, String prefix) {
+
+        return null;
+    }
+
     @NotNull
+    @Override
     public String getOriginalName() {
         return originalName;
     }

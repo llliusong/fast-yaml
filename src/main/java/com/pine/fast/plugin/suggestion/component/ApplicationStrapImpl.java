@@ -1,11 +1,11 @@
 package com.pine.fast.plugin.suggestion.component;
 
 /**
- * é¡¹ç›®å¯åŠ¨æ—¶è°ƒç”¨ï¼Œåˆå§‹åŒ–é…ç½®ï¼Œç´¢å¼•ç­‰ åº”å°½å¯èƒ½é¿å…åœ¨åº”ç”¨ç¨‹åºå¯åŠ¨æ—¶æ‰§è¡Œä»£ç ï¼Œå› ä¸ºè¿™ä¼šå‡æ…¢å¯åŠ¨é€Ÿåº¦ã€‚æ’ä»¶ä»£ç ä»…åº”åœ¨æ‰“å¼€é¡¹ç›®ï¼ˆè¯·å‚é˜…Project Openï¼‰æˆ–ç”¨æˆ·è°ƒç”¨æ’ä»¶çš„æ“ä½œæ—¶æ‰§è¡Œã€‚å¦‚æœæ— æ³•é¿å…è¿™ç§æƒ…å†µï¼Œè¯·æ·»åŠ è®¢é˜…AppLifecycleListenerä¸»é¢˜çš„ä¾¦å¬å™¨ã€‚
+ * ÏîÄ¿Æô¶¯Ê±µ÷ÓÃ£¬³õÊ¼»¯ÅäÖÃ£¬Ë÷ÒıµÈ Ó¦¾¡¿ÉÄÜ±ÜÃâÔÚÓ¦ÓÃ³ÌĞòÆô¶¯Ê±Ö´ĞĞ´úÂë£¬ÒòÎªÕâ»á¼õÂıÆô¶¯ËÙ¶È¡£²å¼ş´úÂë½öÓ¦ÔÚ´ò¿ªÏîÄ¿£¨Çë²ÎÔÄProject Open£©»òÓÃ»§µ÷ÓÃ²å¼şµÄ²Ù×÷Ê±Ö´ĞĞ¡£Èç¹ûÎŞ·¨±ÜÃâÕâÖÖÇé¿ö£¬ÇëÌí¼Ó¶©ÔÄAppLifecycleListenerÖ÷ÌâµÄÕìÌıÆ÷¡£
  * https://plugins.jetbrains.com/docs/intellij/plugin-components.html#project-open
  *
  * @author pine
- * @date 2021/3/31 12:08 ä¸Šåˆ.
+ * @date 2021/3/31 12:08 ÉÏÎç.
  */
 public class ApplicationStrapImpl //implements AppLifecycleListener {
 {

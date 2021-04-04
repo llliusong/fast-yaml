@@ -34,7 +34,7 @@ public class InItstrapImpl implements InItstrap, ProjectComponent {
     @Override
     public void projectOpened() {
         // This will trigger indexing
-        // TODO: pine 2021/3/31 å¯¼å…¥åæ‰§è¡Œ
+        // TODO: pine 2021/3/31 µ¼ÈëºóÖ´ĞĞ
         if (true) {
             return;
         }

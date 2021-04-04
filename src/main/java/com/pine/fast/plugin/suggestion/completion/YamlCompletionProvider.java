@@ -5,6 +5,7 @@ import static java.util.Objects.requireNonNull;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionProvider;
 import com.intellij.codeInsight.completion.CompletionResultSet;
+import com.intellij.codeInsight.completion.PrefixMatcher;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
@@ -103,6 +104,10 @@ class YamlCompletionProvider extends CompletionProvider<CompletionParameters> {
                         queryWithDotDelimitedPrefixes, siblingsToExclude);
 
         if (suggestions != null) {
+//            CompletionResultSet re = resultSet.withPrefixMatcher("$.getText()");
+//            suggestions.forEach(s -> {
+//                resultSet.addElement(s);
+//            });
             suggestions.forEach(resultSet::addElement);
         }
     }

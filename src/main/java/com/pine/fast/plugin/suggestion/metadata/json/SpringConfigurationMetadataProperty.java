@@ -33,6 +33,7 @@ import javax.annotation.Nullable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -104,6 +105,20 @@ public class SpringConfigurationMetadataProperty
     private SuggestionNodeType nodeType;
     private boolean delegateCreationAttempted;
 
+    /**
+     * 是否追加冒号
+     */
+    @Setter
+    @Getter
+    private Boolean isAppendColon;
+
+    /**
+     * 原名，输入回车后的值
+     */
+    @Setter
+    @Getter
+    private String originalName;
+
     @Nullable
     public List<SuggestionNode> findChildDeepestKeyMatch(Module module,
                                                          List<SuggestionNode> matchesRootTillParentNode, String[] pathSegments,
@@ -171,9 +186,35 @@ public class SpringConfigurationMetadataProperty
                                          List<SuggestionNode> matchesRootTillMe, int numOfAncestors) {
         Suggestion.SuggestionBuilder builder = Suggestion.builder().suggestionToDisplay(
                 GenericUtil.dotDelimitedOriginalNames(matchesRootTillMe, numOfAncestors))
-                .description(description).shortType(GenericUtil.shortenedType(className))
-                .defaultValue(getDefaultValueAsStr()).numOfAncestors(numOfAncestors)
-                .matchesTopFirst(matchesRootTillMe).icon(getSuggestionNodeType(module).getIcon());
+                .description(description)
+                .shortType(GenericUtil.shortenedType(className))
+                .defaultValue(getDefaultValueAsStr())
+                .numOfAncestors(numOfAncestors)
+                .matchesTopFirst(matchesRootTillMe)
+                .icon(getSuggestionNodeType(module).getIcon())
+                .isAppendColon(isAppendColon);
+        if (deprecation != null) {
+            builder.deprecationLevel(deprecation.getLevel() != null ?
+                    deprecation.getLevel() :
+                    SpringConfigurationMetadataDeprecationLevel.warning);
+        }
+        return builder.fileType(fileType).build();
+    }
+
+    @NotNull
+    public Suggestion buildKeySuggestion2(Module module, FileType fileType,
+                                          List<SuggestionNode> matchesRootTillMe, String prefix, int numOfAncestors) {
+        String names = GenericUtil.dotDelimitedOriginalNames(matchesRootTillMe, numOfAncestors);
+        String suggestionToDisplay = StringUtils.isEmpty(prefix) ? names : prefix + names;
+        Suggestion.SuggestionBuilder builder = Suggestion.builder().suggestionToDisplay(
+                suggestionToDisplay)
+                .description(description)
+                .shortType(GenericUtil.shortenedType(className))
+                .defaultValue(getDefaultValueAsStr())
+                .numOfAncestors(numOfAncestors)
+                .matchesTopFirst(matchesRootTillMe)
+                .icon(getSuggestionNodeType(module).getIcon())
+                .isAppendColon(isAppendColon);
         if (deprecation != null) {
             builder.deprecationLevel(deprecation.getLevel() != null ?
                     deprecation.getLevel() :
@@ -508,6 +549,15 @@ public class SpringConfigurationMetadataProperty
                             .findChildKeySuggestionForQueryPrefix(module, fileType, matchesRootTillMe,
                                     numOfAncestors, querySegmentPrefixes, querySegmentPrefixStartIndex));
         }
+
+        @Override
+        public SortedSet<Suggestion> findKeySuggestionsForQueryPrefix2(Module module, FileType fileType,
+                                                                       List<SuggestionNode> matchesRootTillMe, int numOfAncestors, String querySegmentPrefixes,
+                                                                       int querySegmentPrefixStartIndex, @Nullable Set<String> siblingsToExclude, String prefix) {
+
+            return null;
+        }
+
 
         @Nullable
         @Override

@@ -16,6 +16,7 @@ import com.intellij.codeInsight.lookup.LookupElementRenderer;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.module.Module;
+import com.pine.fast.plugin.misc.GenericUtil;
 import com.pine.fast.plugin.suggestion.clazz.ClassMetadata;
 import com.pine.fast.plugin.suggestion.completion.FileType;
 import com.pine.fast.plugin.suggestion.metadata.json.SpringConfigurationMetadataDeprecationLevel;
@@ -36,6 +37,9 @@ public class Suggestion implements Comparable<Suggestion> {
 
     public static final String PERIOD_DELIMITER = "\\.";
 
+    /**
+     * 根据建议节点拼接代码提示
+     */
     private static final LookupElementRenderer<LookupElement> CUSTOM_SUGGESTION_RENDERER =
             new LookupElementRenderer<LookupElement>() {
                 @Override
@@ -65,15 +69,13 @@ public class Suggestion implements Comparable<Suggestion> {
                         shortDescription = shortenTextWithEllipsis(suggestion.defaultValue, 60, 0, true);
                         TextAttributes attrs =
                                 EditorColorsManager.getInstance().getGlobalScheme().getAttributes(SCALAR_TEXT);
-                        // TODO: pine 使用空格
 //            presentation.setTailText("=" + shortDescription, attrs.getForegroundColor());
-
-                        presentation.setTailText(" " + shortDescription, attrs.getForegroundColor());
+                        presentation.setTailText(" (" + shortDescription + ")", attrs.getForegroundColor());
                     }
 
                     if (suggestion.description != null) {
                         presentation
-                                .appendTailText(" (" + getFirstSentenceWithoutDot(suggestion.description) + ")",
+                                .appendTailText(" " + getFirstSentenceWithoutDot(suggestion.description),
                                         true);
                     }
 
@@ -126,12 +128,19 @@ public class Suggestion implements Comparable<Suggestion> {
 
     private String pathDotDelimitedRootToLeaf;
 
+    /**
+     * 是否追加冒号
+     */
+    @Getter
+    @Setter
+    private Boolean isAppendColon;
+
     @Builder
     public Suggestion(@NotNull String suggestionToDisplay, @Nullable String description,
                       @Nullable String shortType, @Nullable String defaultValue,
                       @Nullable SpringConfigurationMetadataDeprecationLevel deprecationLevel,
                       @NotNull List<? extends SuggestionNode> matchesTopFirst, int numOfAncestors, boolean forValue,
-                      boolean representingDefaultValue, @NotNull FileType fileType, @Nullable Icon icon) {
+                      boolean representingDefaultValue, @NotNull FileType fileType, @Nullable Icon icon, Boolean isAppendColon) {
         this.suggestionToDisplay = suggestionToDisplay;
         this.description = description;
         this.shortType = shortType;
@@ -145,10 +154,11 @@ public class Suggestion implements Comparable<Suggestion> {
         this.icon = icon;
         this.pathDotDelimitedRootToLeaf =
                 matchesTopFirst.stream().map(SuggestionNode::getOriginalName).collect(joining("."));
+        this.isAppendColon = isAppendColon == null || isAppendColon;
     }
 
     public LookupElementBuilder newLookupElement() {
-        LookupElementBuilder builder = LookupElementBuilder.create(this, suggestionToDisplay);
+        LookupElementBuilder builder = LookupElementBuilder.create(this, suggestionToDisplay).withCaseSensitivity(false);
         if (forValue) {
             if (description != null) {
                 builder = builder.withTypeText(description, true);
@@ -165,7 +175,7 @@ public class Suggestion implements Comparable<Suggestion> {
     }
 
     public String getFullPath() {
-        return com.pine.fast.plugin.misc.GenericUtil.dotDelimitedOriginalNames(matchesTopFirst);
+        return GenericUtil.dotDelimitedOriginalNames(matchesTopFirst);
     }
 
     public SuggestionNodeType getSuggestionNodeType(Module module) {
@@ -187,7 +197,7 @@ public class Suggestion implements Comparable<Suggestion> {
     }
 
     @NotNull
-    public List<? extends com.pine.fast.plugin.suggestion.OriginalNameProvider> getMatchesForReplacement() {
+    public List<? extends OriginalNameProvider> getMatchesForReplacement() {
         if (matchesTopFirst.size() > numOfAncestors) {
             return matchesTopFirst.stream().skip(numOfAncestors).collect(toList());
         } else { // can happen when user is trying to select as a child of array, in this case, the suggestion itself becomes the original name

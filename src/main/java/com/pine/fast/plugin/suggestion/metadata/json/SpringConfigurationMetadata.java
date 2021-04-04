@@ -16,4 +16,10 @@ public class SpringConfigurationMetadata {
     private List<SpringConfigurationMetadataProperty> properties;
     @Nullable
     private List<SpringConfigurationMetadataHint> hints;
+
+    /**
+     * ¼òµ¥key:value, È«¾ÖËÑË÷
+     */
+    private List<SpringConfigurationMetadataProperty> simples;
+
 }

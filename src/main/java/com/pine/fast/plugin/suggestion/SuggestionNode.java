@@ -67,6 +67,11 @@ public interface SuggestionNode
                                                            List<SuggestionNode> matchesRootTillMe, int numOfAncestors, String[] querySegmentPrefixes,
                                                            int querySegmentPrefixStartIndex, @Nullable Set<String> siblingsToExclude);
 
+    SortedSet<Suggestion> findKeySuggestionsForQueryPrefix2(Module module, FileType fileType,
+                                                            List<SuggestionNode> matchesRootTillMe, int numOfAncestors, String querySegmentPrefixes,
+                                                            int querySegmentPrefixStartIndex, @Nullable Set<String> siblingsToExclude, String prefix);
+
+
     @Nullable
     String getNameForDocumentation(Module module);
 
@@ -85,6 +90,7 @@ public interface SuggestionNode
 
     /**
      * Find all applicable suggestions for the given search text
+     * 根据给定文本前缀获取建议(代码提示)
      *
      * @param module            module
      * @param fileType          type of file requesting suggestion
