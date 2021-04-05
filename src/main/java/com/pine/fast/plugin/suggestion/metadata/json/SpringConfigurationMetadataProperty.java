@@ -204,11 +204,10 @@ public class SpringConfigurationMetadataProperty
 
     @NotNull
     public Suggestion buildKeySuggestion2(Module module, FileType fileType,
-                                          List<SuggestionNode> matchesRootTillMe, String prefix, int numOfAncestors) {
-        String names = GenericUtil.dotDelimitedOriginalNames(matchesRootTillMe, numOfAncestors);
-        String suggestionToDisplay = StringUtils.isEmpty(prefix) ? names : prefix + names;
+                                          List<SuggestionNode> matchesRootTillMe, int numOfAncestors) {
+        String names = matchesRootTillMe.get(0).getName();
         Suggestion.SuggestionBuilder builder = Suggestion.builder().suggestionToDisplay(
-                suggestionToDisplay)
+                names)
                 .description(description)
                 .shortType(GenericUtil.shortenedType(className))
                 .defaultValue(getDefaultValueAsStr())
@@ -575,6 +574,11 @@ public class SpringConfigurationMetadataProperty
         @Override
         public boolean supportsDocumentation() {
             return true;
+        }
+
+        @Override
+        public String getName() {
+            return name;
         }
 
         @Override

@@ -10,7 +10,7 @@ import java.util.SortedSet;
 import javax.annotation.Nullable;
 
 public interface SuggestionNode
-        extends OriginalNameProvider, DocumentationProvider, SuggestionNodeTypeProvider {
+        extends OriginalNameProvider, DocumentationProvider, SuggestionNodeTypeProvider,NameProvoder {
 
     static String sanitise(String name) {
         return name.trim().replaceAll("_", "").replace("-", "").toLowerCase();

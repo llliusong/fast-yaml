@@ -310,6 +310,11 @@ public class MapClassMetadata extends ClassMetadata {
             return false;
         }
 
+        @Override
+        public String getName() {
+            return helper.getOriginalName();
+        }
+
         @Nullable
         @Override
         public String getOriginalName() {

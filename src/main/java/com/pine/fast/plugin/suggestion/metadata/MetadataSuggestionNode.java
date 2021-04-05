@@ -85,9 +85,10 @@ public abstract class MetadataSuggestionNode implements SuggestionNode {
      */
     public abstract void refreshClassProxy(Module module);
 
-    protected abstract String getName();
+    public abstract String getName();
 
     @NotNull
+    @Override
     public abstract String getOriginalName();
 
     @Nullable

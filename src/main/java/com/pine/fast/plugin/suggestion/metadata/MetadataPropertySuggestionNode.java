@@ -180,7 +180,7 @@ public class MetadataPropertySuggestionNode extends MetadataSuggestionNode {
                                                                   String querySegmentPrefixes) {
         if (!property.isDeprecatedError()) {
             if (property.getName().contains(querySegmentPrefixes)) {
-                return GenericUtil.newSingleElementSortedSet(property.buildKeySuggestion(module, fileType, matchesRootTillMe, numOfAncestors));
+                return GenericUtil.newSingleElementSortedSet(property.buildKeySuggestion2(module, fileType, matchesRootTillMe, numOfAncestors));
             }
         }
         return null;

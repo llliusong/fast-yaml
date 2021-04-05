@@ -51,6 +51,7 @@ class YamlCompletionProvider extends CompletionProvider<CompletionParameters> {
             return;
         }
 
+        // 在当前yaml中已经存在的key值，进行去重处理
         Set<String> siblingsToExclude = null;
 
         PsiElement elementContext = element.getContext();
@@ -101,18 +102,22 @@ class YamlCompletionProvider extends CompletionProvider<CompletionParameters> {
             context = requireNonNull(context).getParent();
         } while (context != null);
 
-        String pre = queryWithDotDelimitedPrefixes;
-        boolean contains = pre.contains("$.");
-        if (contains) {
-            pre = "$." + StringUtils.substringAfterLast(pre, "$.");
+        String s = "\\$\\{\\w+\\}=|\\$\\{\\w+\\} =";
+        boolean contains = false;
+
+        String handleStr = queryWithDotDelimitedPrefixes;
+        String[] split = queryWithDotDelimitedPrefixes.split(s);
+        if (split.length == 2) {
+            contains = true;
+            handleStr = split[1].trim();
         }
 
         suggestions = service
                 .findSuggestionsForQueryPrefix(project, module, FileType.yaml, element, ancestralKeys,
-                        queryWithDotDelimitedPrefixes, pre, siblingsToExclude);
+                        queryWithDotDelimitedPrefixes, handleStr, siblingsToExclude);
 
         if (suggestions != null) {
-            Consumer<LookupElementBuilder> addElement = contains ?  resultSet.withPrefixMatcher(pre)::addElement :resultSet::addElement;
+            Consumer<LookupElementBuilder> addElement = contains ?  resultSet.withPrefixMatcher(handleStr)::addElement :resultSet::addElement;
             suggestions.forEach(addElement);
         }
     }

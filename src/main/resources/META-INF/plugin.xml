@@ -1,10 +1,10 @@
-<idea-plugin url="https://github.com/llliusong">
+<idea-plugin url="https://github.com/llliusong/fast-plugin">
 
     <id>com.pine.fast.plugin</id>
-    <name>yaml插件</name>
+    <name>FastYaml</name>
     <!-- Will be auto populated by plugin -->
     <version>1.0.0</version>
-    <vendor email="570520260@qq.com" url="http://1ton.in/">Development Team @ 1Ton Technologies</vendor>
+    <vendor email="570520260@qq.com" url="https://github.com/llliusong">大熊</vendor>
 
     <!-- Will be auto populated by plugin -->
     <description>基于fasttest自定义的一款代码补全插件</description>
@@ -33,6 +33,8 @@
         <projectService
                 serviceInterface="com.pine.fast.plugin.suggestion.service.SuggestionService"
                 serviceImplementation="com.pine.fast.plugin.suggestion.service.SuggestionServiceImpl"/>
+
+            <applicationService serviceImplementation="com.pine.fast.plugin.persistent.ServerPersistent"/>
     </extensions>
 
 
@@ -48,16 +50,22 @@
 
 <!--    </application-components>-->
 
-    <project-components>
-        <component>
-            <interface-class>
-                com.pine.fast.plugin.suggestion.component.InItstrap
-            </interface-class>
-            <implementation-class>
-                com.pine.fast.plugin.suggestion.component.InItstrapImpl
-            </implementation-class>
-        </component>
-    </project-components>
+<!--    <project-components>-->
+<!--        <component>-->
+<!--            <interface-class>-->
+<!--                com.pine.fast.plugin.suggestion.component.InItstrap-->
+<!--            </interface-class>-->
+<!--            <implementation-class>-->
+<!--                com.pine.fast.plugin.suggestion.component.InItstrapImpl-->
+<!--            </implementation-class>-->
+<!--        </component>-->
+<!--    </project-components>-->
+
+    <actions>
+        <group id="fastYaml" text="Fast Yaml" class="com.pine.fast.plugin.action.YamlAnGroup" popup="true">
+            <add-to-group group-id="ToolsMenu" anchor="last" />
+        </group>
+    </actions>
 
 
 </idea-plugin>

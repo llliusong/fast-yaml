@@ -21,6 +21,8 @@ import com.intellij.openapi.roots.OrderEnumerator;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.pine.fast.plugin.misc.GenericUtil;
+import com.pine.fast.plugin.persistent.ServerPersistent;
+import com.pine.fast.plugin.persistent.ServiceConfig;
 import com.pine.fast.plugin.suggestion.metadata.MetadataContainerInfo;
 import com.pine.fast.plugin.suggestion.metadata.MetadataNonPropertySuggestionNode;
 import com.pine.fast.plugin.suggestion.metadata.MetadataPropertySuggestionNode;
@@ -75,12 +77,9 @@ public class SuggestionServiceImpl implements SuggestionService {
     private Future<?> currentExecution;
     private volatile boolean indexingInProgress;
 
-    private volatile boolean isHint;
-
     SuggestionServiceImpl() {
         moduleNameToSeenContainerPathToContainerInfo = new THashMap<>();
         moduleNameToRootSearchIndex = new THashMap<>();
-        isHint = true;
     }
 
     /**
@@ -183,11 +182,6 @@ public class SuggestionServiceImpl implements SuggestionService {
         });
     }
 
-    @Override
-    public void reindex(Project project, Module module) {
-        reindex(project, new Module[]{module});
-    }
-
     private void initSearchIndex(Module module) {
         Trie<String, MetadataSuggestionNode> rootSearchIndex = moduleNameToRootSearchIndex.get(MODULE_NAME);
         Trie<String, MetadataSuggestionNode> simpleSearchIndex = moduleNameToRootSearchIndex.get(SIMPLE_NAME);
@@ -245,50 +239,16 @@ public class SuggestionServiceImpl implements SuggestionService {
 
     @Override
     public boolean canProvideSuggestions(Project project, Module module) {
-//    Trie<String, MetadataSuggestionNode> rootSearchIndex =
-//        moduleNameToRootSearchIndex.get(module.getName());
-//    return rootSearchIndex != null && rootSearchIndex.size() != 0;
-        return isHint;
+        ServerPersistent serverPersistent = ServerPersistent.getInstance();
+        ServiceConfig state = serverPersistent.getState();
+        return state == null || state.getHint() == null || state.getHint();
     }
 
     @Override
     public List<LookupElementBuilder> findSuggestionsForQueryPrefix(Project project, Module module,
                                                                     FileType fileType, PsiElement element, @Nullable List<String> ancestralKeys,
                                                                     String queryWithDotDelimitedPrefixes, String pre, @Nullable Set<String> siblingsToExclude) {
-//    return doFindSuggestionsForQueryPrefix(module,
-//        moduleNameToRootSearchIndex.get(module.getName()), fileType, element, ancestralKeys,
-//        queryWithDotDelimitedPrefixes, siblingsToExclude);
         initSearchIndex(module);
-
-//        // TODO: pine 构建节点查找树，使用自定义查找
-//        SpringConfigurationMetadataProperty property = new SpringConfigurationMetadataProperty();
-//        property.setName("configProperty");
-//
-//        // 按回车之后的至
-//        MetadataPropertySuggestionNode suggestionNode = new MetadataPropertySuggestionNode();
-//        suggestionNode.setName("nodeName");
-//        suggestionNode.setOriginalName("click('id = ')");
-//        suggestionNode.setProperty(property);
-//
-//        ArrayList<MetadataPropertySuggestionNode> arrayList = new ArrayList<>();
-//        arrayList.add(suggestionNode);
-//
-//        // 显示建议
-//        Suggestion suggestion = Suggestion.builder()
-//                .suggestionToDisplay("clickid")
-//                .description("点击某个元素")
-//                .defaultValue("id = ''")
-//                .shortType("shortType")
-//                .icon(Icons.DEFAULT_ICON)
-//                .matchesTopFirst(arrayList)
-//                .fileType(FileType.yaml)
-//                .isAppendColon(false)
-//                .build();
-//
-//        Set<Suggestion> suggestions = new HashSet<>();
-//        suggestions.add(suggestion);
-        //
-//        List<LookupElementBuilder> lookupElementBuilders = toLookupElementBuilders(suggestions);
 
         List<LookupElementBuilder> lookupElementBuilders = doFindSuggestions(module,
                 moduleNameToRootSearchIndex.get(SIMPLE_NAME), fileType, pre);
@@ -350,15 +310,12 @@ public class SuggestionServiceImpl implements SuggestionService {
 
     private List<LookupElementBuilder> doFindSuggestions(Module module,
                                                          Trie<String, MetadataSuggestionNode> rootSearchIndex, FileType fileType, String queryWithDotDelimitedPrefixes) {
-        String finalQueryWithDotDelimitedPrefixes = queryWithDotDelimitedPrefixes;
-        debug(() -> log.debug("Search requested for " + finalQueryWithDotDelimitedPrefixes));
+        debug(() -> log.debug("Search requested for " + queryWithDotDelimitedPrefixes));
         StopWatch timer = new StopWatch();
         timer.start();
         try {
             // 简单匹配只需要对顶层进行查询
             Set<Suggestion> suggestions = doFindSuggestionsForQueryPrefix2(module, fileType, rootSearchIndex.values(), queryWithDotDelimitedPrefixes);
-
-
             if (suggestions != null) {
                 return toLookupElementBuilders(suggestions);
             }

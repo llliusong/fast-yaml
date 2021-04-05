@@ -26,8 +26,6 @@ public interface SuggestionService {
 
     void reindex(Project project, Module[] modules);
 
-    void reindex(Project project, Module module);
-
     @Nullable
     List<SuggestionNode> findMatchedNodesRootTillEnd(Project project, Module module,
                                                      List<String> containerElements);

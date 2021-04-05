@@ -93,6 +93,11 @@ class IterableKeySuggestionNode implements SuggestionNode {
         return false;
     }
 
+    @Override
+    public String getName() {
+        return unwrapped.getName();
+    }
+
     @Nullable
     @Override
     public String getOriginalName() {

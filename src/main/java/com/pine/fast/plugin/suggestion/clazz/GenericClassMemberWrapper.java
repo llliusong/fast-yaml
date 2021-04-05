@@ -102,6 +102,11 @@ public class GenericClassMemberWrapper implements SuggestionNode, SuggestionDocu
         return null;
     }
 
+    @Override
+    public String getName() {
+        return originalName;
+    }
+
     @NotNull
     @Override
     public String getOriginalName() {
