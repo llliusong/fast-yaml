@@ -8,7 +8,7 @@ import com.pine.fast.plugin.persistent.ServiceConfig;
 public class OpenHitAction extends AnAction {
 
     public OpenHitAction() {
-        super("Close Hint");
+        super("关闭提示");
     }
 
     @Override
@@ -30,10 +30,9 @@ public class OpenHitAction extends AnAction {
             return;
         }
         e.getPresentation().setText(getHintText(state.getHint()));
-        System.out.println("��ǰ״̬" + state.getHint());
     }
 
     private static String getHintText(Boolean hint) {
-        return hint == null || hint ? "Close Hint" : "Open Hint";
+        return hint == null || hint ? "关闭提示" : "打开提示";
     }
 }

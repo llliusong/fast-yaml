@@ -7,12 +7,12 @@ import com.pine.fast.plugin.misc.Icons;
 
 public class ReloadAction extends AnAction {
     public ReloadAction() {
-        super("¼ÓÔØ×Ô¶¨ÒåÅäÖÃ");
+        super("åŠ è½½è‡ªå®šä¹‰é…ç½®");
     }
 
     @Override
     public void actionPerformed(AnActionEvent e) {
-        Messages.showMessageDialog("¹¦ÄÜ¿ª·¢ÖĞ£¡", "Fast Yaml", Messages.getWarningIcon());
+        Messages.showMessageDialog("åŠŸèƒ½å¼€å‘ä¸­", "Fast Yaml", Messages.getWarningIcon());
 
     }
 }

@@ -18,7 +18,7 @@ public class SpringConfigurationMetadata {
     private List<SpringConfigurationMetadataHint> hints;
 
     /**
-     * ¼òµ¥key:value, È«¾ÖËÑË÷
+     * ç®€å•key:valueï¼Œæ²¡æœ‰å­çº§
      */
     private List<SpringConfigurationMetadataProperty> simples;
 

@@ -51,7 +51,7 @@ class YamlCompletionProvider extends CompletionProvider<CompletionParameters> {
             return;
         }
 
-        // ÔÚµ±Ç°yamlÖĞÒÑ¾­´æÔÚµÄkeyÖµ£¬½øĞĞÈ¥ÖØ´¦Àí
+        // å·²ç»å­˜åœ¨çš„keyï¼Œéœ€è¦è¿›è¡Œæ’é™¤
         Set<String> siblingsToExclude = null;
 
         PsiElement elementContext = element.getContext();

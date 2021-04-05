@@ -107,14 +107,14 @@ public class SpringConfigurationMetadataProperty
     private boolean delegateCreationAttempted;
 
     /**
-     * ÊÇ·ñ×·¼ÓÃ°ºÅ
+     * æ˜¯å¦è¿½åŠ å†’å·
      */
     @Setter
     @Getter
     private Boolean isAppendColon;
 
     /**
-     * Ô­Ãû£¬ÊäÈë»Ø³µºóµÄÖµ
+     * åŸå(é€‰ä¸­åæ•²å‡»å›è½¦çš„å€¼)
      */
     @Setter
     @Getter

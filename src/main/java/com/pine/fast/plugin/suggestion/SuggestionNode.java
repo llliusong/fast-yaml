@@ -89,7 +89,7 @@ public interface SuggestionNode
 
     /**
      * Find all applicable suggestions for the given search text
-     * ¸ù¾İ¸ø¶¨ÎÄ±¾Ç°×º»ñÈ¡½¨Òé(´úÂëÌáÊ¾)
+     * ä¸ºç»™å®šçš„æœç´¢æ–‡æœ¬æ‰¾åˆ°æ‰€æœ‰é€‚ç”¨çš„å»ºè®®
      *
      * @param module            module
      * @param fileType          type of file requesting suggestion

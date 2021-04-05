@@ -159,7 +159,7 @@ public class MetadataPropertySuggestionNode extends MetadataSuggestionNode {
                                                                   List<SuggestionNode> matchesRootTillMe, int numOfAncestors, String[] querySegmentPrefixes,
                                                                   int querySegmentPrefixStartIndex, @Nullable Set<String> siblingsToExclude) {
         if (!property.isDeprecatedError()) {
-            // querySegmentPrefixStartIndex 0±íÊ¾Ã»ÓÐÕÒµ½£¬²éÕÒ¶ù×Ó½ÚµãÊÇ·ñÆ¥Åä£¬±ê¼ÇÎª1ÒÑ¾­ÕÒµ½ÁËÍ·£¬Ö±½Ó×é×°½¨ÒéÏÔÊ¾¶ÔÏó
+            // querySegmentPrefixStartIndex æ ‡è®°ä¸º0æ—¶åˆ™è¡¨ç¤ºæ²¡æœ‰æ‰¾åˆ°çˆ¶èŠ‚ç‚¹ï¼Œéœ€è¦ç»§ç»­ä»Žå­èŠ‚ç‚¹ä¸­å¯»æ‰¾ï¼Œæ ‡è®°ä¸º1æ—¶ç›´æŽ¥ç»„è£…æˆ suggestion å¯¹è±¡
             boolean lookingForConcreteNode = querySegmentPrefixStartIndex >= querySegmentPrefixes.length;
             if (lookingForConcreteNode) {
                 return GenericUtil.newSingleElementSortedSet(property.buildKeySuggestion(module, fileType, matchesRootTillMe, numOfAncestors));
