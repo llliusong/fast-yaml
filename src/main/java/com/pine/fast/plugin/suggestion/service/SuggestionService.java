@@ -20,12 +20,6 @@ public interface SuggestionService {
         return ServiceManager.getService(project, SuggestionService.class);
     }
 
-    void init(Project project) throws IOException;
-
-    void reIndex(Project project);
-
-    void reindex(Project project, Module[] modules);
-
     @Nullable
     List<SuggestionNode> findMatchedNodesRootTillEnd(Project project, Module module,
                                                      List<String> containerElements);

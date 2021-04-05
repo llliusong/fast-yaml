@@ -4,12 +4,12 @@
     <name>FastYaml</name>
     <!-- Will be auto populated by plugin -->
     <version>1.0.0</version>
-    <vendor email="570520260@qq.com" url="https://github.com/llliusong">大熊</vendor>
+    <vendor email="570520260@qq.com" url="https://github.com/llliusong">@llliusong @Jodeee</vendor>
 
     <!-- Will be auto populated by plugin -->
-    <description>基于fasttest自定义的一款代码补全插件</description>
+    <description>YAML code completion plugin</description>
     <change-notes/>
-
+we
     <idea-version since-build="172"/>
 
     <depends>com.intellij.modules.java</depends>
@@ -22,6 +22,8 @@
 <!--    <applicationListeners>-->
 <!--        <listener class="com.shetline.lligatures.LigaturesLimited" topic="com.intellij.ide.AppLifecycleListener"/>-->
 <!--    </applicationListeners>-->
+
+    <!--  参考： https://github.com/1tontech/intellij-spring-assistant-->
 
     <extensions defaultExtensionNs="com.intellij">
         <completion.contributor language="yaml"
@@ -36,30 +38,6 @@
 
             <applicationService serviceImplementation="com.pine.fast.plugin.persistent.ServerPersistent"/>
     </extensions>
-
-
-<!--    <application-components>-->
-<!--        <component>-->
-<!--            <interface-class>-->
-<!--                com.pine.fast.plugin.suggestion.component.InItstrap-->
-<!--            </interface-class>-->
-<!--            <implementation-class>-->
-<!--                com.pine.fast.plugin.suggestion.component.InItstrapImpl-->
-<!--            </implementation-class>-->
-<!--        </component>-->
-
-<!--    </application-components>-->
-
-<!--    <project-components>-->
-<!--        <component>-->
-<!--            <interface-class>-->
-<!--                com.pine.fast.plugin.suggestion.component.InItstrap-->
-<!--            </interface-class>-->
-<!--            <implementation-class>-->
-<!--                com.pine.fast.plugin.suggestion.component.InItstrapImpl-->
-<!--            </implementation-class>-->
-<!--        </component>-->
-<!--    </project-components>-->
 
     <actions>
         <group id="fastYaml" text="Fast Yaml" class="com.pine.fast.plugin.action.YamlAnGroup" popup="true">

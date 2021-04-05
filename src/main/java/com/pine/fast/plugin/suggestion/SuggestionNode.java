@@ -13,7 +13,8 @@ public interface SuggestionNode
         extends OriginalNameProvider, DocumentationProvider, SuggestionNodeTypeProvider,NameProvoder {
 
     static String sanitise(String name) {
-        return name.trim().replaceAll("_", "").replace("-", "").toLowerCase();
+        return name.trim().replaceAll("_", "").replace("-", "");
+//        return name.trim().replaceAll("_", "").replace("-", "").toLowerCase();
     }
 
     /**

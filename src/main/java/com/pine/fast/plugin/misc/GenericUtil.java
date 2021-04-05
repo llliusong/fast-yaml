@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 
 /**
- * Í¨ÓÃ¹¤¾ßÀà
+ * é€šç”¨å·¥å…·ç±»
  *
  * @author pine
  */
@@ -110,23 +110,6 @@ public class GenericUtil {
         }
     }
 
-    public static String moduleNamesAsStrCommaDelimited(List<Module> newModules,
-                                                        boolean includeProjectName) {
-        return moduleNamesAsStrCommaDelimited(newModules.stream(), includeProjectName);
-    }
-
-    public static String moduleNamesAsStrCommaDelimited(Module[] newModules,
-                                                        boolean includeProjectName) {
-        return moduleNamesAsStrCommaDelimited(stream(newModules), includeProjectName);
-    }
-
-    private static String moduleNamesAsStrCommaDelimited(Stream<Module> moduleStream,
-                                                         boolean includeProjectName) {
-        return moduleStream.map(module -> includeProjectName ?
-                module.getProject().getName() + ":" + module.getName() :
-                module.getName()).collect(joining(", "));
-    }
-
     public static String truncateIdeaDummyIdentifier(@NotNull PsiElement element) {
         return truncateIdeaDummyIdentifier(element.getText());
     }
@@ -165,23 +148,6 @@ public class GenericUtil {
         return type;
     }
 
-    public static String dotDelimitedOriginalNames(
-            List<? extends SuggestionNode> matchesTopFirstTillParentNode, SuggestionNode currentNode) {
-        StringBuilder builder = new StringBuilder();
-
-        for (SuggestionNode aMatchesTopFirstTillParentNode : matchesTopFirstTillParentNode) {
-            String originalName = aMatchesTopFirstTillParentNode.getOriginalName();
-            if (originalName != null) {
-                builder.append(originalName).append(".");
-            }
-        }
-
-        String originalName = currentNode.getOriginalName();
-        if (originalName != null) {
-            builder.append(originalName);
-        }
-        return builder.toString();
-    }
 
     public static String dotDelimitedOriginalNames(List<? extends SuggestionNode> matches) {
         return dotDelimitedOriginalNames(matches, 0);
@@ -227,11 +193,6 @@ public class GenericUtil {
         SortedSet<T> suggestions = new TreeSet<>();
         suggestions.add(t);
         return suggestions;
-    }
-
-    public static Optional<String> getKeyNameOfObject(final PsiElement psiElement) {
-        return Optional.of(psiElement).filter(el -> el instanceof YAMLKeyValue)
-                .map(YAMLKeyValue.class::cast).map(YAMLKeyValue::getName);
     }
 
 }

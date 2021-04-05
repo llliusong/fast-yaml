@@ -21,7 +21,6 @@ buildscript {
     }
     dependencies {
         classpath "gradle.plugin.org.jetbrains.intellij.plugins:gradle-intellij-plugin:0.2.18"
-//        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.1'
         classpath 'org.codehaus.groovy:groovy-all:2.4.13'
         classpath group: 'com.vladsch.flexmark', name: 'flexmark', version: '0.28.12'
     }
@@ -29,7 +28,6 @@ buildscript {
 
 apply plugin: 'java'
 apply plugin: 'org.jetbrains.intellij'
-//apply plugin: 'org.junit.platform.gradle.plugin'
 
 sourceCompatibility = 1.8
 
@@ -52,8 +50,8 @@ String readmeXmlAsHtml() {
     HtmlRenderer renderer = HtmlRenderer.builder().build()
     String readmeContent = new File(rootProject.uri('README.md')).text
     // since these images needs to shown from within intellij, lest put absolute urls so that the images & changelog will be visible
-    readmeContent = readmeContent.replaceAll("help\\.gif", "https://raw.githubusercontent.com/1tontech/intellij-spring-assistant/" + version + "/help.gif")
-    readmeContent = readmeContent.replaceAll("CHANGELOG.md", "https://github.com/1tontech/intellij-spring-assistant/blob/" + version + "/CHANGELOG.md")
+    readmeContent = readmeContent.replaceAll("fast-yaml\\.gif", "http://47.110.43.11/media/fast/" + version + "/fast-yaml.gif")
+    readmeContent = readmeContent.replaceAll("CHANGELOG.md", "http://47.110.43.11/media/fast/" + version + "/CHANGELOG.md")
     Document readmeDocument = parser.parse(readmeContent)
     renderer.render(readmeDocument)
 }
@@ -69,7 +67,6 @@ intellij {
     version 'IC-2017.2'
 //    version = "IU-2019.3.3"
 //    version "2020.1.1"
-//    plugins = ['properties', 'yaml', 'maven', 'gradle', 'Lombook Plugin:0.16-2017.2']
     plugins = ['properties', 'yaml', 'maven', 'gradle']
     downloadSources true
     patchPluginXml {
