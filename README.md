@@ -5,10 +5,7 @@ Yaml动态输入、可配置
 
 See [here](CHANGELOG.md)
 
-## License
-
-Fast Yaml - IntelliJ Plugin is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
-
 ## Powered By
 
-[![Structure 101](http://structure101.com/static-content/images/s101_170.png)](http://structure101.com)
+[@Pine](https://github.com/llliusong)
+[@Jodeee](https://github.com/Jodeee)
