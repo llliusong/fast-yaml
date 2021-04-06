@@ -20,7 +20,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "gradle.plugin.org.jetbrains.intellij.plugins:gradle-intellij-plugin:0.2.18"
+        classpath "gradle.plugin.org.jetbrains.intellij.plugins:gradle-intellij-plugin:0.4.26"
         classpath 'org.codehaus.groovy:groovy-all:2.4.13'
         classpath group: 'com.vladsch.flexmark', name: 'flexmark', version: '0.28.12'
     }
@@ -28,6 +28,7 @@ buildscript {
 
 apply plugin: 'java'
 apply plugin: 'org.jetbrains.intellij'
+apply plugin: 'groovy'
 
 sourceCompatibility = 1.8
 
@@ -36,7 +37,9 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'org.projectlombok:lombok:1.16.20'
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.20'
+    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.20'
+
     compile 'org.apache.commons:commons-collections4:4.1'
     compile 'com.miguelfonseca.completely:completely-core:0.8.0'
 
@@ -64,10 +67,11 @@ String changeLogAsHtml() {
 }
 
 intellij {
-    version 'IC-2017.2'
-//    version = "IU-2019.3.3"
-//    version "2020.1.1"
-    plugins = ['properties', 'yaml', 'maven', 'gradle']
+    pluginName = "FastYaml"
+//    idea 2019 后的版本默认不再包含Java language PSI Model模块，需要手动引入，详情如下
+//    https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html?from=jetbrains.org#exploring-module-and-plugin-apis
+    version "2020.1.1"
+    plugins = ['java', 'properties', 'yaml', 'maven', 'gradle', 'Lombook Plugin:0.34-2020.1']
     downloadSources true
     patchPluginXml {
         pluginDescription readmeXmlAsHtml()

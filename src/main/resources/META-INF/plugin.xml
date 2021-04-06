@@ -9,7 +9,7 @@
     <!-- Will be auto populated by plugin -->
     <description>YAML code completion plugin</description>
     <change-notes/>
-we
+
     <idea-version since-build="172"/>
 
     <depends>com.intellij.modules.java</depends>
@@ -19,9 +19,9 @@ we
     <depends>com.intellij.properties</depends>
 
 
-<!--    <applicationListeners>-->
-<!--        <listener class="com.shetline.lligatures.LigaturesLimited" topic="com.intellij.ide.AppLifecycleListener"/>-->
-<!--    </applicationListeners>-->
+    <!--    <applicationListeners>-->
+    <!--        <listener class="com.shetline.lligatures.LigaturesLimited" topic="com.intellij.ide.AppLifecycleListener"/>-->
+    <!--    </applicationListeners>-->
 
     <!--  参考： https://github.com/1tontech/intellij-spring-assistant-->
 
@@ -32,16 +32,18 @@ we
         <documentationProvider
                 implementation="com.pine.fast.plugin.suggestion.completion.YamlDocumentationProvider"/>
 
+
+        <applicationService serviceImplementation="com.pine.fast.plugin.persistent.ServerPersistent"/>
+
         <projectService
                 serviceInterface="com.pine.fast.plugin.suggestion.service.SuggestionService"
                 serviceImplementation="com.pine.fast.plugin.suggestion.service.SuggestionServiceImpl"/>
 
-            <applicationService serviceImplementation="com.pine.fast.plugin.persistent.ServerPersistent"/>
     </extensions>
 
     <actions>
         <group id="fastYaml" text="Fast Yaml" class="com.pine.fast.plugin.action.YamlAnGroup" popup="true">
-            <add-to-group group-id="ToolsMenu" anchor="last" />
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
         </group>
     </actions>
 
