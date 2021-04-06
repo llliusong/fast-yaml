@@ -14,4 +14,5 @@ out/
 **/*.ipl
 *.iwl
 **/*.iwl
-DS
+.DS_Store
+**/*.DS_Store
