@@ -15,9 +15,7 @@ import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.codeInsight.lookup.LookupElementRenderer;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.markup.TextAttributes;
-import com.intellij.openapi.module.Module;
 import com.pine.fast.plugin.misc.GenericUtil;
-import com.pine.fast.plugin.suggestion.clazz.ClassMetadata;
 import com.pine.fast.plugin.suggestion.completion.FileType;
 import com.pine.fast.plugin.suggestion.metadata.json.SpringConfigurationMetadataDeprecationLevel;
 import java.util.List;
@@ -177,10 +175,6 @@ public class Suggestion implements Comparable<Suggestion> {
 
     public String getFullPath() {
         return GenericUtil.dotDelimitedOriginalNames(matchesTopFirst);
-    }
-
-    public SuggestionNodeType getSuggestionNodeType(Module module) {
-        return getLastSuggestionNode().getSuggestionNodeType(module);
     }
 
     public SuggestionNode getLastSuggestionNode() {

@@ -31,9 +31,8 @@ public class YamlKeyInsertHandler implements InsertHandler<LookupElement> {
             String existingIndentation = getExistingIndentation(context, lookupElement);
             Suggestion suggestion = (Suggestion) lookupElement.getObject();
             String indentPerLevel = GenericUtil.getCodeStyleIntent(context);
-            Module module = PsiCustomUtil.findModule(context);
             String suggestionWithCaret =
-                    getSuggestionReplacementWithCaret(module, suggestion, existingIndentation,
+                    getSuggestionReplacementWithCaret(suggestion, existingIndentation,
                             indentPerLevel);
             String suggestionWithoutCaret = suggestionWithCaret.replace(SuggestionNodeType.CARET, "");
 
@@ -119,7 +118,7 @@ public class YamlKeyInsertHandler implements InsertHandler<LookupElement> {
     }
 
     @NotNull
-    private String getSuggestionReplacementWithCaret(Module module, Suggestion suggestion,
+    private String getSuggestionReplacementWithCaret(Suggestion suggestion,
                                                      String existingIndentation, String indentPerLevel) {
         StringBuilder builder = new StringBuilder();
         int i = 0;
@@ -138,27 +137,18 @@ public class YamlKeyInsertHandler implements InsertHandler<LookupElement> {
         builder.delete(0, existingIndentation.length() + 1);
         String indentForNextLevel =
                 GenericUtil.getOverallIndent(existingIndentation, indentPerLevel, matchesTopFirst.size());
-        String sufix = getPlaceholderSufixWithCaret(module, suggestion, indentForNextLevel);
+        String sufix = getPlaceholderSufixWithCaret(suggestion, indentForNextLevel);
         builder.append(sufix);
         return builder.toString();
     }
 
     @NotNull
-    private String getPlaceholderSufixWithCaret(Module module, Suggestion suggestion,
+    private String getPlaceholderSufixWithCaret(Suggestion suggestion,
                                                 String indentForNextLevel) {
         if (suggestion.getLastSuggestionNode().isMetadataNonProperty()) {
             return "\n" + indentForNextLevel + SuggestionNodeType.CARET;
         }
-        SuggestionNodeType nodeType = suggestion.getSuggestionNodeType(module);
-        if (nodeType == SuggestionNodeType.UNDEFINED || nodeType == SuggestionNodeType.UNKNOWN_CLASS) {
-            return SuggestionNodeType.CARET;
-        } else if (nodeType.representsLeaf()) {
-            return " " + SuggestionNodeType.CARET;
-        } else if (nodeType.representsArrayOrCollection()) {
-            return "\n" + indentForNextLevel + "- " + SuggestionNodeType.CARET;
-        } else { // map or class
-            return "\n" + indentForNextLevel + SuggestionNodeType.CARET;
-        }
+        return SuggestionNodeType.CARET;
     }
 
 }

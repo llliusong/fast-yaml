@@ -8,11 +8,8 @@ import static com.intellij.openapi.util.text.StringUtil.isNotEmpty;
 import static com.intellij.openapi.util.text.StringUtil.replace;
 import static java.text.BreakIterator.getSentenceInstance;
 import static java.util.Arrays.asList;
-import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.joining;
 
 import com.intellij.codeInsight.completion.InsertionContext;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
@@ -23,15 +20,12 @@ import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.yaml.psi.YAMLKeyValue;
 
 /**
  * 通用工具类
@@ -152,6 +146,24 @@ public class GenericUtil {
     public static String dotDelimitedOriginalNames(List<? extends SuggestionNode> matches) {
         return dotDelimitedOriginalNames(matches, 0);
     }
+
+    public static String dotDelimitedNames(List<? extends SuggestionNode> matches,
+                                                   int startIndex) {
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = startIndex; i < matches.size(); i++) {
+            String name = matches.get(i).getName();
+            if (name != null) {
+                builder.append(name);
+                boolean appendDot = i < matches.size() - 1;
+                if (appendDot) {
+                    builder.append(".");
+                }
+            }
+        }
+        return builder.toString();
+    }
+
 
     public static String dotDelimitedOriginalNames(List<? extends SuggestionNode> matches,
                                                    int startIndex) {

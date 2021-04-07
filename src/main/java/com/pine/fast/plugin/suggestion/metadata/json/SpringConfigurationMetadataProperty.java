@@ -1,8 +1,6 @@
 package com.pine.fast.plugin.suggestion.metadata.json;
 
-import static com.intellij.codeInsight.documentation.DocumentationManager.createHyperlink;
 import static com.intellij.util.containers.ContainerUtil.isEmpty;
-import static com.pine.fast.plugin.suggestion.clazz.ClassSuggestionNodeFactory.newMetadataProxy;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.compare;
 import static java.util.Objects.requireNonNull;
@@ -12,16 +10,13 @@ import static java.util.stream.Collectors.toSet;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.module.Module;
-import com.intellij.psi.PsiType;
 import com.pine.fast.plugin.misc.GenericUtil;
 import com.pine.fast.plugin.misc.Icons;
-import com.pine.fast.plugin.misc.PsiCustomUtil;
-import com.pine.fast.plugin.suggestion.clazz.MapClassMetadataProxy;
-import com.pine.fast.plugin.suggestion.clazz.MetadataProxy;
-import com.pine.fast.plugin.suggestion.clazz.MetadataProxyInvokerWithReturnValue;
 import com.pine.fast.plugin.suggestion.Suggestion;
 import com.pine.fast.plugin.suggestion.SuggestionNode;
 import com.pine.fast.plugin.suggestion.SuggestionNodeType;
+import com.pine.fast.plugin.suggestion.clazz.MetadataProxy;
+import com.pine.fast.plugin.suggestion.clazz.MetadataProxyInvokerWithReturnValue;
 import com.pine.fast.plugin.suggestion.completion.FileType;
 import java.lang.reflect.Array;
 import java.util.Collection;
@@ -34,7 +29,6 @@ import javax.annotation.Nullable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -170,8 +164,7 @@ public class SpringConfigurationMetadataProperty
                 return matchesStream.map(hintValue -> {
                     HintAwareSuggestionNode suggestionNode = new HintAwareSuggestionNode(hintValue);
                     return hintValue
-                            .buildSuggestionForKey(fileType, matchesRootTillMe, numOfAncestors, suggestionNode,
-                                    getMapKeyType(module));
+                            .buildSuggestionForKey(fileType, matchesRootTillMe, numOfAncestors, suggestionNode);
                 }).collect(toCollection(TreeSet::new));
             } else {
                 return doWithDelegateOrReturnNull(module, delegate -> delegate
@@ -192,7 +185,8 @@ public class SpringConfigurationMetadataProperty
                 .defaultValue(getDefaultValueAsStr())
                 .numOfAncestors(numOfAncestors)
                 .matchesTopFirst(matchesRootTillMe)
-                .icon(getSuggestionNodeType(module).getIcon())
+//                .icon(getSuggestionNodeType(module).getIcon())
+                .icon(Icons.DEFAULT_ICON)
                 .isAppendColon(isAppendColon);
         if (deprecation != null) {
             builder.deprecationLevel(deprecation.getLevel() != null ?
@@ -205,9 +199,8 @@ public class SpringConfigurationMetadataProperty
     @NotNull
     public Suggestion buildKeySuggestion2(Module module, FileType fileType,
                                           List<SuggestionNode> matchesRootTillMe, int numOfAncestors) {
-        String names = matchesRootTillMe.get(0).getName();
         Suggestion.SuggestionBuilder builder = Suggestion.builder().suggestionToDisplay(
-                names)
+                GenericUtil.dotDelimitedNames(matchesRootTillMe, numOfAncestors))
                 .description(description)
                 .shortType(GenericUtil.shortenedType(className))
                 .defaultValue(getDefaultValueAsStr())
@@ -222,68 +215,6 @@ public class SpringConfigurationMetadataProperty
                     SpringConfigurationMetadataDeprecationLevel.warning);
         }
         return builder.fileType(fileType).build();
-    }
-
-    @NotNull
-    public String getDocumentationForKey(String nodeNavigationPathDotDelimited) {
-        // Format for the documentation is as follows
-        /*
-         * <p><b>a.b.c</b> ({@link com.acme.Generic}<{@link com.acme.Class1}, {@link com.acme.Class2}>)</p>
-         * <p><em>Default Value</em> default value</p>
-         * <p>Long description</p>
-         * or of this type
-         * <p><b>Type</b> {@link com.acme.Array}[]</p>
-         * <p><b>Declared at</b>{@link com.acme.GenericRemovedClass#method}></p> <-- only for groups with method info
-         * <b>WARNING:</b>
-         * @deprecated Due to something something. Replaced by <b>c.d.e</b>
-         */
-        StringBuilder builder =
-                new StringBuilder().append("<b>").append(nodeNavigationPathDotDelimited).append("</b>");
-
-        if (className != null) {
-            builder.append(" (");
-            GenericUtil.updateClassNameAsJavadocHtml(builder, className);
-            builder.append(")");
-        }
-
-        if (description != null) {
-            builder.append("<p>").append(description).append("</p>");
-        }
-
-        if (defaultValue != null) {
-            builder.append("<p><em>Default value: </em>").append(getDefaultValueAsStr()).append("</p>");
-        }
-
-        if (sourceType != null) {
-            String sourceTypeInJavadocFormat = GenericUtil.removeGenerics(sourceType);
-
-            // lets show declaration point only if does not match the type
-            if (!sourceTypeInJavadocFormat.equals(GenericUtil.removeGenerics(className))) {
-                StringBuilder buffer = new StringBuilder();
-                createHyperlink(buffer, GenericUtil.methodForDocumentationNavigation(sourceTypeInJavadocFormat),
-                        sourceTypeInJavadocFormat, false);
-                sourceTypeInJavadocFormat = buffer.toString();
-
-                builder.append("<p>Declared at ").append(sourceTypeInJavadocFormat).append("</p>");
-            }
-        }
-
-        if (deprecation != null) {
-            builder.append("<p><b>").append(isDeprecatedError() ?
-                    "ERROR: DO NOT USE THIS PROPERTY AS IT IS COMPLETELY UNSUPPORTED" :
-                    "WARNING: PROPERTY IS DEPRECATED").append("</b></p>");
-
-            if (deprecation.getReason() != null) {
-                builder.append("@deprecated Reason: ").append(deprecation.getReason());
-            }
-
-            if (deprecation.getReplacement() != null) {
-                builder.append("<p>Replaced by property <b>").append(deprecation.getReplacement())
-                        .append("</b></p>");
-            }
-        }
-
-        return builder.toString();
     }
 
     public boolean isLeaf(Module module) {
@@ -315,21 +246,7 @@ public class SpringConfigurationMetadataProperty
     public void refreshDelegate(Module module) {
         if (className != null) {
             // Lets update the delegate information only if anything has changed from last time we saw this
-            PsiType type = getPsiType(module);
-            boolean validTypeExists = type != null;
             // In the previous refresh, class could not be found. Now class is available in the classpath
-            if (validTypeExists) {
-                if (delegate == null) {
-                    delegate = newMetadataProxy(module, type);
-                    // lets force the nodeType to recalculated
-                    nodeType = null;
-                }
-            }
-            // In the previous refresh, class was available in classpath. Now it is no longer available
-            if (!validTypeExists && delegate != null) {
-                delegate = null;
-                nodeType = SuggestionNodeType.UNKNOWN_CLASS;
-            }
         }
         delegateCreationAttempted = true;
     }
@@ -360,7 +277,7 @@ public class SpringConfigurationMetadataProperty
 
                 return matchesStream.map(match -> match
                         .buildSuggestionForValue(fileType, matchesRootTillContainerProperty,
-                                getDefaultValueAsStr(), getPsiType(module))).collect(toCollection(TreeSet::new));
+                                getDefaultValueAsStr())).collect(toCollection(TreeSet::new));
             }
         } else {
             return doWithDelegateOrReturnNull(module, delegate -> delegate
@@ -405,13 +322,6 @@ public class SpringConfigurationMetadataProperty
         }
     }
 
-    private PsiType getPsiType(Module module) {
-        if (className != null) {
-            return PsiCustomUtil.safeGetValidType(module, className);
-        }
-        return null;
-    }
-
     private boolean isMapWithPredefinedValues() {
         return valueHint != null && valueHint.representsValueOfMap();
     }
@@ -441,16 +351,6 @@ public class SpringConfigurationMetadataProperty
         return doWithDelegateOrReturnDefault(module, invoker, null);
     }
 
-    private <T> T doWithMapDelegateOrReturnNull(Module module,
-                                                MetadataProxyInvokerWithReturnValue<T> invoker) {
-        MetadataProxy delegate = getDelegate(module);
-        if (delegate != null) {
-            assert delegate instanceof MapClassMetadataProxy;
-            return invoker.invoke(MapClassMetadataProxy.class.cast(delegate));
-        }
-        return null;
-    }
-
     private String getDefaultValueAsStr() {
         if (defaultValue != null && !(defaultValue instanceof Array)
                 && !(defaultValue instanceof Collection)) {
@@ -478,48 +378,6 @@ public class SpringConfigurationMetadataProperty
         return delegate;
     }
 
-    @Nullable
-    private PsiType getMapKeyType(Module module) {
-        SuggestionNodeType nodeType = getSuggestionNodeType(module);
-        if (nodeType == SuggestionNodeType.MAP) {
-            return doWithDelegateOrReturnNull(module, delegate -> {
-                assert delegate instanceof MapClassMetadataProxy;
-                return MapClassMetadataProxy.class.cast(delegate).getMapKeyType(module);
-            });
-        }
-        return null;
-    }
-
-    @Nullable
-    private PsiType getMapValueType(Module module) {
-        SuggestionNodeType nodeType = getSuggestionNodeType(module);
-        if (nodeType == SuggestionNodeType.MAP) {
-            return doWithDelegateOrReturnNull(module, delegate -> {
-                assert delegate instanceof MapClassMetadataProxy;
-                return MapClassMetadataProxy.class.cast(delegate).getMapValueType(module);
-            });
-        }
-        return null;
-    }
-
-    public String getDocumentationForValue(Module module, String nodeNavigationPathDotDelimited,
-                                           String value) {
-        if (isLeafWithKnownValues()) {
-            assert genericOrKeyHint != null;
-            SpringConfigurationMetadataHintValue hintValueWithName =
-                    genericOrKeyHint.findHintValueWithName(value);
-            if (hintValueWithName != null) {
-                return hintValueWithName
-                        .getDocumentationForValue(nodeNavigationPathDotDelimited, getMapValueType(module));
-            }
-        } else {
-            // possible this represents an enum
-            return doWithDelegateOrReturnNull(module, delegate -> delegate
-                    .getDocumentationForValue(module, nodeNavigationPathDotDelimited, value));
-        }
-        return null;
-    }
-
 
     class HintAwareSuggestionNode implements SuggestionNode {
 
@@ -545,10 +403,7 @@ public class SpringConfigurationMetadataProperty
         public SortedSet<Suggestion> findKeySuggestionsForQueryPrefix(Module module, FileType fileType,
                                                                       List<SuggestionNode> matchesRootTillMe, int numOfAncestors, String[] querySegmentPrefixes,
                                                                       int querySegmentPrefixStartIndex) {
-            return doWithMapDelegateOrReturnNull(module,
-                    delegate -> MapClassMetadataProxy.class.cast(delegate)
-                            .findChildKeySuggestionForQueryPrefix(module, fileType, matchesRootTillMe,
-                                    numOfAncestors, querySegmentPrefixes, querySegmentPrefixStartIndex));
+            return null;
         }
 
         @Override
@@ -564,16 +419,7 @@ public class SpringConfigurationMetadataProperty
         public SortedSet<Suggestion> findKeySuggestionsForQueryPrefix(Module module, FileType fileType,
                                                                       List<SuggestionNode> matchesRootTillMe, int numOfAncestors, String[] querySegmentPrefixes,
                                                                       int querySegmentPrefixStartIndex, @Nullable Set<String> siblingsToExclude) {
-            return doWithMapDelegateOrReturnNull(module,
-                    delegate -> MapClassMetadataProxy.class.cast(delegate)
-                            .findChildKeySuggestionForQueryPrefix(module, fileType, matchesRootTillMe,
-                                    numOfAncestors, querySegmentPrefixes, querySegmentPrefixStartIndex,
-                                    siblingsToExclude));
-        }
-
-        @Override
-        public boolean supportsDocumentation() {
-            return true;
+            return null;
         }
 
         @Override
@@ -586,38 +432,6 @@ public class SpringConfigurationMetadataProperty
             return target.toString();
         }
 
-        @Nullable
-        @Override
-        public String getNameForDocumentation(Module module) {
-            return getOriginalName();
-        }
-
-        @Nullable
-        @Override
-        public String getDocumentationForKey(Module module, String nodeNavigationPathDotDelimited) {
-            return target
-                    .getDocumentationForKey(module, nodeNavigationPathDotDelimited, getDelegate(module));
-        }
-
-        @Nullable
-        @Override
-        public SortedSet<Suggestion> findValueSuggestionsForPrefix(Module module, FileType fileType,
-                                                                   List<SuggestionNode> matchesRootTillMe, String prefix) {
-            if (isMapWithPredefinedValues()) {
-                assert valueHint != null;
-                Collection<SpringConfigurationMetadataHintValue> matches =
-                        valueHint.findHintValuesWithPrefix(prefix);
-                if (matches != null && matches.size() != 0) {
-                    return matches.stream().map(match -> match
-                            .buildSuggestionForValue(fileType, matchesRootTillMe, getDefaultValueAsStr(),
-                                    getMapValueType(module))).collect(toCollection(TreeSet::new));
-                }
-            } else {
-                return doWithDelegateOrReturnNull(module, delegate -> delegate
-                        .findValueSuggestionsForPrefix(module, fileType, matchesRootTillMe, prefix));
-            }
-            return null;
-        }
 
         @Nullable
         @Override
@@ -632,8 +446,7 @@ public class SpringConfigurationMetadataProperty
                     Stream<SpringConfigurationMetadataHintValue> matchesStream =
                             getMatchesAfterExcludingSiblings(valueHint, matches, siblingsToExclude);
                     return matchesStream.map(match -> match
-                            .buildSuggestionForValue(fileType, matchesRootTillMe, getDefaultValueAsStr(),
-                                    getMapValueType(module))).collect(toCollection(TreeSet::new));
+                            .buildSuggestionForValue(fileType, matchesRootTillMe, getDefaultValueAsStr())).collect(toCollection(TreeSet::new));
                 }
             } else {
                 return doWithDelegateOrReturnNull(module, delegate -> delegate
@@ -642,45 +455,18 @@ public class SpringConfigurationMetadataProperty
             return null;
         }
 
-        @Nullable
-        @Override
-        public String getDocumentationForValue(Module module, String nodeNavigationPathDotDelimited,
-                                               String originalValue) {
-            if (isMapWithPredefinedValues()) {
-                assert valueHint != null;
-                Collection<SpringConfigurationMetadataHintValue> matches =
-                        valueHint.findHintValuesWithPrefix(originalValue);
-                assert matches != null && matches.size() == 1;
-                SpringConfigurationMetadataHintValue hint = matches.iterator().next();
-                return hint
-                        .getDocumentationForValue(nodeNavigationPathDotDelimited, getMapValueType(module));
-            } else {
-                return doWithDelegateOrReturnNull(module, delegate -> delegate
-                        .getDocumentationForValue(module, nodeNavigationPathDotDelimited, originalValue));
-            }
-        }
-
         @Override
         public boolean isLeaf(Module module) {
             if (isLeafWithKnownValues() || isMapWithPredefinedValues()) {
                 return true;
             }
             // whether the node is a leaf or not depends on the value of the map that containing property points to
-            return PsiCustomUtil.getSuggestionNodeType(getMapValueType(module)).representsLeaf();
+            return false;
         }
 
         @Override
         public boolean isMetadataNonProperty() {
             return false;
-        }
-
-        @NotNull
-        @Override
-        public SuggestionNodeType getSuggestionNodeType(Module module) {
-            if (isLeafWithKnownValues() || isMapWithPredefinedValues()) { // predefined values
-                return SuggestionNodeType.ENUM;
-            }
-            return PsiCustomUtil.getSuggestionNodeType(getMapValueType(module));
         }
 
     }

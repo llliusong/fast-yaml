@@ -7,12 +7,9 @@ import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
-import com.intellij.psi.PsiType;
 import com.pine.fast.plugin.misc.GenericUtil;
-import com.pine.fast.plugin.misc.PsiCustomUtil;
 import com.pine.fast.plugin.suggestion.Suggestion;
 import com.pine.fast.plugin.suggestion.SuggestionNode;
-import com.pine.fast.plugin.suggestion.SuggestionNodeType;
 import com.pine.fast.plugin.suggestion.completion.FileType;
 import com.pine.fast.plugin.suggestion.metadata.json.SpringConfigurationMetadataGroup;
 import com.pine.fast.plugin.suggestion.metadata.json.SpringConfigurationMetadataProperty;
@@ -233,12 +230,6 @@ public class MetadataNonPropertySuggestionNode extends MetadataSuggestionNode {
         return deepestMatch;
     }
 
-    public void addChildren(Module module, SpringConfigurationMetadataGroup group,
-                            String[] rawPathSegments, int startIndex, String belongsTo) {
-        MetadataNonPropertySuggestionNode groupNode =
-                addChildren(rawPathSegments, startIndex, rawPathSegments.length - 1, belongsTo);
-        groupNode.setGroup(module, group);
-    }
 
     public void addChildren(SpringConfigurationMetadataProperty property, String[] rawPathSegments,
                             int startIndex, String belongsTo) {
@@ -394,29 +385,11 @@ public class MetadataNonPropertySuggestionNode extends MetadataSuggestionNode {
         return false;
     }
 
-    @NotNull
-    @Override
-    public String getDocumentationForKey(Module module, String nodeNavigationPathDotDelimited) {
-        if (isGroup()) {
-            assert group != null;
-            return group.getDocumentation(nodeNavigationPathDotDelimited);
-        }
-        throw new RuntimeException(
-                "Documentation not supported for this element. Call supportsDocumentation() first");
-    }
-
     @Nullable
     @Override
     public SortedSet<Suggestion> findValueSuggestionsForPrefix(Module module, FileType fileType,
                                                                List<SuggestionNode> matchesRootTillMe, String prefix,
                                                                @Nullable Set<String> siblingsToExclude) {
-        throw new IllegalAccessError("Should never be called");
-    }
-
-    @Nullable
-    @Override
-    public String getDocumentationForValue(Module module, String nodeNavigationPathDotDelimited,
-                                           String originalValue) {
         throw new IllegalAccessError("Should never be called");
     }
 
@@ -432,31 +405,6 @@ public class MetadataNonPropertySuggestionNode extends MetadataSuggestionNode {
 
     private boolean hasChildren() {
         return childrenTrie != null && childrenTrie.size() != 0;
-    }
-
-    @NotNull
-    @Override
-    public SuggestionNodeType getSuggestionNodeType(Module module) {
-        if (isGroup()) {
-            assert group != null;
-            return group.getNodeType();
-        } else {
-            return SuggestionNodeType.UNDEFINED;
-        }
-    }
-
-    public void setGroup(Module module, SpringConfigurationMetadataGroup group) {
-        updateGroupType(module, group);
-        this.group = group;
-    }
-
-    @Override
-    public void refreshClassProxy(Module module) {
-        updateGroupType(module, group);
-        if (hasChildren()) {
-            assert childLookup != null;
-            childLookup.values().forEach(child -> child.refreshClassProxy(module));
-        }
     }
 
     private Collection<MetadataSuggestionNode> computeChildrenToIterateOver(
@@ -541,17 +489,6 @@ public class MetadataNonPropertySuggestionNode extends MetadataSuggestionNode {
             }
         }
         return suggestions;
-    }
-
-    private void updateGroupType(Module module, SpringConfigurationMetadataGroup group) {
-        if (group != null && group.getClassName() != null) {
-            PsiType groupPsiType = PsiCustomUtil.safeGetValidType(module, group.getClassName());
-            if (groupPsiType != null) {
-                group.setNodeType(PsiCustomUtil.getSuggestionNodeType(groupPsiType));
-            } else {
-                group.setNodeType(SuggestionNodeType.UNKNOWN_CLASS);
-            }
-        }
     }
 
 }

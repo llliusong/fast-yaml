@@ -1,19 +1,15 @@
 package com.pine.fast.plugin.suggestion.clazz;
 
 import com.intellij.openapi.module.Module;
-import com.intellij.psi.PsiType;
 import com.pine.fast.plugin.suggestion.Suggestion;
 import com.pine.fast.plugin.suggestion.SuggestionNode;
 import com.pine.fast.plugin.suggestion.SuggestionNodeType;
 import com.pine.fast.plugin.suggestion.completion.FileType;
-import com.pine.fast.plugin.suggestion.completion.SuggestionDocumentationHelper;
-import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
+import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Since the class documentation is tied to the actual class being available in the classpath of the target project the
@@ -24,25 +20,9 @@ import java.util.SortedSet;
 public interface MetadataProxy {
 
     @Nullable
-    SuggestionDocumentationHelper findDirectChild(Module module, String pathSegment);
-
-    @Nullable
-    Collection<? extends SuggestionDocumentationHelper> findDirectChildrenForQueryPrefix(
-            Module module, String querySegmentPrefix);
-
-    @Nullable
-    Collection<? extends SuggestionDocumentationHelper> findDirectChildrenForQueryPrefix(
-            Module module, String querySegmentPrefix, @Nullable Set<String> siblingsToExclude);
-
-    @Nullable
     List<SuggestionNode> findDeepestSuggestionNode(Module module,
                                                    List<SuggestionNode> matchesRootTillParentNode, String[] pathSegments,
                                                    int pathSegmentStartIndex);
-
-    @Nullable
-    SortedSet<Suggestion> findKeySuggestionsForQueryPrefix(Module module, FileType fileType,
-                                                           List<SuggestionNode> matchesRootTillParentNode, int numOfAncestors,
-                                                           String[] querySegmentPrefixes, int querySegmentPrefixStartIndex);
 
     @Nullable
     SortedSet<Suggestion> findKeySuggestionsForQueryPrefix(Module module, FileType fileType,
@@ -59,20 +39,9 @@ public interface MetadataProxy {
                                                         List<SuggestionNode> matchesRootTillMe, String prefix,
                                                         @Nullable Set<String> siblingsToExclude);
 
-    @Nullable
-    String getDocumentationForValue(Module module, String nodeNavigationPathDotDelimited,
-                                    String originalValue);
-
     boolean isLeaf(Module module);
 
     @NotNull
     SuggestionNodeType getSuggestionNodeType(Module module);
-
-    @Nullable
-    PsiType getPsiType(Module module);
-
-    boolean targetRepresentsArray();
-
-    boolean targetClassRepresentsIterable(Module module);
 
 }

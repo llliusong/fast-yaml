@@ -26,7 +26,6 @@ buildscript {
     }
 }
 
-apply plugin: 'java'
 apply plugin: 'org.jetbrains.intellij'
 apply plugin: 'groovy'
 
@@ -71,7 +70,7 @@ intellij {
 //    idea 2019 后的版本默认不再包含Java language PSI Model模块，需要手动引入，详情如下
 //    https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html?from=jetbrains.org#exploring-module-and-plugin-apis
     version "2020.1.1"
-    plugins = ['java', 'properties', 'yaml', 'maven', 'gradle', 'Lombook Plugin:0.34-2020.1']
+    plugins = ['yaml', 'Lombook Plugin:0.34-2020.1']
     downloadSources true
     patchPluginXml {
         pluginDescription readmeXmlAsHtml()

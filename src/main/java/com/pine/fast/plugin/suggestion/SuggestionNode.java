@@ -1,16 +1,14 @@
 package com.pine.fast.plugin.suggestion;
 
 import com.intellij.openapi.module.Module;
-import com.pine.fast.plugin.suggestion.completion.DocumentationProvider;
 import com.pine.fast.plugin.suggestion.completion.FileType;
-import com.pine.fast.plugin.suggestion.completion.SuggestionNodeTypeProvider;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import javax.annotation.Nullable;
 
 public interface SuggestionNode
-        extends OriginalNameProvider, DocumentationProvider, SuggestionNodeTypeProvider,NameProvoder {
+        extends OriginalNameProvider, NameProvoder {
 
     static String sanitise(String name) {
         return name.trim().replaceAll("_", "").replace("-", "");
@@ -70,22 +68,6 @@ public interface SuggestionNode
 
     SortedSet<Suggestion> findKeySuggestionsForContains(Module module, FileType fileType,
                                                             List<SuggestionNode> matchesRootTillMe, int numOfAncestors, String querySegmentPrefixes);
-
-    @Nullable
-    String getNameForDocumentation(Module module);
-
-    /**
-     * Find all applicable suggestions for the given search text
-     *
-     * @param module            module
-     * @param fileType          type of file requesting suggestion
-     * @param matchesRootTillMe path from root till current node
-     * @param prefix            prefix to find matches for
-     * @return suggestions that contain the given search text
-     */
-    @Nullable
-    SortedSet<Suggestion> findValueSuggestionsForPrefix(Module module, FileType fileType,
-                                                        List<SuggestionNode> matchesRootTillMe, String prefix);
 
     /**
      * Find all applicable suggestions for the given search text

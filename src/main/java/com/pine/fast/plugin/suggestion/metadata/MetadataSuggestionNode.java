@@ -11,9 +11,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.Stack;
 import javax.annotation.Nullable;
-
-import org.apache.commons.lang.StringUtils;
-import org.codehaus.groovy.ant.UberCompileTask;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,14 +47,6 @@ public abstract class MetadataSuggestionNode implements SuggestionNode {
                 querySegmentPrefixes);
     }
 
-
-    @Nullable
-    @Override
-    public SortedSet<Suggestion> findValueSuggestionsForPrefix(Module module, FileType fileType,
-                                                               List<SuggestionNode> matchesRootTillMe, String prefix) {
-        return findValueSuggestionsForPrefix(module, fileType, matchesRootTillMe, prefix, null);
-    }
-
     public void addRefCascadeTillRoot(String containerPath) {
         MetadataSuggestionNode node = this;
         do {
@@ -77,14 +66,7 @@ public abstract class MetadataSuggestionNode implements SuggestionNode {
      */
     public abstract boolean removeRefCascadeDown(String containerPath);
 
-    /**
-     * During reindexing lets make sure that we refresh references to proxies so that subsequent searches would be
-     * faster
-     *
-     * @param module idea module
-     */
-    public abstract void refreshClassProxy(Module module);
-
+    @Override
     public abstract String getName();
 
     @NotNull
@@ -126,19 +108,6 @@ public abstract class MetadataSuggestionNode implements SuggestionNode {
             current = current.getParent();
         } while (current != null);
         return leafTillRoot.stream().collect(joining("."));
-    }
-
-    @Override
-    public boolean supportsDocumentation() {
-        return isGroup() || isProperty();
-    }
-
-    @Nullable
-    @Override
-    public String getNameForDocumentation(Module module) {
-        return getSuggestionNodeType(module).representsArrayOrCollection() ?
-                getOriginalName() + "[]" :
-                getOriginalName();
     }
 
     public abstract String toTree();

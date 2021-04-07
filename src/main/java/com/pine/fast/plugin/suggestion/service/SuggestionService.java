@@ -5,24 +5,17 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.pine.fast.plugin.suggestion.SuggestionNode;
 import com.pine.fast.plugin.suggestion.completion.FileType;
-import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
-import java.io.IOException;
 import java.util.List;
 import java.util.Set;
+import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 public interface SuggestionService {
 
     static SuggestionService getInstance(@NotNull Project project) {
         return ServiceManager.getService(project, SuggestionService.class);
     }
-
-    @Nullable
-    List<SuggestionNode> findMatchedNodesRootTillEnd(Project project, Module module,
-                                                     List<String> containerElements);
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     boolean canProvideSuggestions(Project project, Module module);

@@ -5,13 +5,15 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.pine.fast.plugin.suggestion.handler.YamlKeyInsertHandler;
 import com.pine.fast.plugin.suggestion.handler.YamlValueInsertHandler;
 
-// TODO: Add properties support
 public enum FileType {
-    yaml, properties;
+    /**
+     * 暂仅支持yaml
+     */
+    YAML;
 
     public InsertHandler<LookupElement> newKeyInsertHandler() {
         switch (this) {
-            case yaml:
+            case YAML:
                 return new YamlKeyInsertHandler();
             default:
                 return null;
@@ -20,7 +22,7 @@ public enum FileType {
 
     public InsertHandler<LookupElement> newValueInsertHandler() {
         switch (this) {
-            case yaml:
+            case YAML:
                 return new YamlValueInsertHandler();
             default:
                 return null;

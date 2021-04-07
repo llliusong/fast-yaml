@@ -84,11 +84,6 @@ public class SuggestionServiceImpl implements SuggestionService {
         return splits;
     }
 
-    private static String firstPathSegment(String element) {
-        return element.trim().split(Suggestion.PERIOD_DELIMITER, -1)[0];
-    }
-
-
     private void initSearchIndex(Module module) {
         Trie<String, MetadataSuggestionNode> rootSearchIndex = moduleNameToRootSearchIndex.get(MODULE_NAME);
         Trie<String, MetadataSuggestionNode> simpleSearchIndex = moduleNameToRootSearchIndex.get(SIMPLE_NAME);
@@ -98,7 +93,6 @@ public class SuggestionServiceImpl implements SuggestionService {
             simpleSearchIndex = new PatriciaTrie<>();
             moduleNameToRootSearchIndex.put(MODULE_NAME, rootSearchIndex);
             moduleNameToRootSearchIndex.put(SIMPLE_NAME, simpleSearchIndex);
-
 
             try {
                 // TODO: pine 2021/3/31 通过本地配置 + 外部配置实现
@@ -121,27 +115,6 @@ public class SuggestionServiceImpl implements SuggestionService {
             }
 
         }
-    }
-
-    @Nullable
-    @Override
-    public List<SuggestionNode> findMatchedNodesRootTillEnd(Project project, Module module,
-                                                            List<String> containerElements) {
-        if (moduleNameToRootSearchIndex.containsKey(module.getName())) {
-            String[] pathSegments =
-                    containerElements.stream().flatMap(element -> stream(toSanitizedPathSegments(element)))
-                            .toArray(String[]::new);
-            MetadataSuggestionNode searchStartNode =
-                    moduleNameToRootSearchIndex.get(module.getName()).get(pathSegments[0]);
-            if (searchStartNode != null) {
-                List<SuggestionNode> matches = GenericUtil.modifiableList(searchStartNode);
-                if (pathSegments.length > 1) {
-                    return searchStartNode.findDeepestSuggestionNode(module, matches, pathSegments, 1);
-                }
-                return matches;
-            }
-        }
-        return null;
     }
 
     @Override
@@ -429,8 +402,8 @@ public class SuggestionServiceImpl implements SuggestionService {
 
 
     private void addSimplesToIndex(
-                                   Trie<String, MetadataSuggestionNode> rootSearchIndex,
-                                   SpringConfigurationMetadata springConfigurationMetadata, String containerArchiveOrFileRef) {
+            Trie<String, MetadataSuggestionNode> rootSearchIndex,
+            SpringConfigurationMetadata springConfigurationMetadata, String containerArchiveOrFileRef) {
         List<SpringConfigurationMetadataProperty> simples =
                 springConfigurationMetadata.getSimples();
         simples.sort(comparing(SpringConfigurationMetadataProperty::getName));

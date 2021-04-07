@@ -1,17 +1,9 @@
 package com.pine.fast.plugin.suggestion.metadata.json;
 
-import static com.pine.fast.plugin.suggestion.handler.YamlValueInsertHandler.unescapeValue;
-import static java.util.Objects.requireNonNull;
-
 import com.google.gson.annotations.SerializedName;
-import com.intellij.openapi.module.Module;
-import com.intellij.psi.PsiType;
 import com.pine.fast.plugin.misc.GenericUtil;
-import com.pine.fast.plugin.misc.PsiCustomUtil;
 import com.pine.fast.plugin.suggestion.Suggestion;
 import com.pine.fast.plugin.suggestion.SuggestionNode;
-import com.pine.fast.plugin.suggestion.SuggestionNodeType;
-import com.pine.fast.plugin.suggestion.clazz.MetadataProxy;
 import com.pine.fast.plugin.suggestion.completion.FileType;
 import java.lang.reflect.Array;
 import java.util.Collection;
@@ -82,78 +74,24 @@ public class SpringConfigurationMetadataHintValue {
 
     @NotNull
     public Suggestion buildSuggestionForKey(FileType fileType,
-                                            List<SuggestionNode> matchesRootTillParentNode, int numOfAncestors, SuggestionNode match,
-                                            @Nullable PsiType keyType) {
+                                            List<SuggestionNode> matchesRootTillParentNode, int numOfAncestors, SuggestionNode match) {
         List<SuggestionNode> matchesRootTillMe = GenericUtil.newListWithMembers(matchesRootTillParentNode, match);
         Suggestion.SuggestionBuilder builder = Suggestion.builder().suggestionToDisplay(
                 GenericUtil.dotDelimitedOriginalNames(matchesRootTillMe, numOfAncestors))
                 .description(description).numOfAncestors(numOfAncestors).matchesTopFirst(matchesRootTillMe);
-
-        if (keyType != null) {
-            builder.shortType(PsiCustomUtil.toClassNonQualifiedName(keyType));
-            builder.icon(SuggestionNodeType.ENUM.getIcon());
-        }
         return builder.fileType(fileType).build();
     }
 
-    @NotNull
-    public String getDocumentationForKey(Module module, String nodeNavigationPathDotDelimited,
-                                         @Nullable MetadataProxy delegate) {
-        StringBuilder builder =
-                new StringBuilder().append("<b>").append(nodeNavigationPathDotDelimited).append("</b>");
-
-        if (delegate != null && delegate.getPsiType(module) != null) {
-            String classFqn = PsiCustomUtil.toClassFqn(requireNonNull(delegate.getPsiType(module)));
-            if (classFqn != null) {
-                builder.append(" (");
-                GenericUtil.updateClassNameAsJavadocHtml(builder, classFqn);
-                builder.append(")");
-            }
-        }
-
-        if (description != null) {
-            builder.append("<p>").append(description).append("</p>");
-        }
-
-        return builder.toString();
-    }
 
     @NotNull
     public Suggestion buildSuggestionForValue(FileType fileType,
-                                              List<? extends SuggestionNode> matchesRootTillLeaf, @Nullable String defaultValue,
-                                              @Nullable PsiType valueType) {
+                                              List<? extends SuggestionNode> matchesRootTillLeaf, @Nullable String defaultValue) {
         Suggestion.SuggestionBuilder builder =
                 Suggestion.builder().suggestionToDisplay(toString()).description(description).forValue(true)
                         .matchesTopFirst(matchesRootTillLeaf).numOfAncestors(matchesRootTillLeaf.size());
 
-        if (valueType != null) {
-            builder.shortType(GenericUtil.shortenedType(valueType.getCanonicalText()));
-            builder.icon(SuggestionNodeType.ENUM.getIcon());
-        }
-
         builder.representingDefaultValue(toString().equals(defaultValue));
         return builder.fileType(fileType).build();
-    }
-
-    @NotNull
-    public String getDocumentationForValue(@NotNull String nodeNavigationPathDotDelimited,
-                                           @Nullable PsiType mapValueType) {
-        StringBuilder builder =
-                new StringBuilder().append("<b>").append(nodeNavigationPathDotDelimited).append("</b>= <b>")
-                        .append(unescapeValue(unescapeValue(toString()))).append("</b>");
-
-        if (mapValueType != null) {
-            String className = mapValueType.getCanonicalText();
-            builder.append(" (");
-            GenericUtil.updateClassNameAsJavadocHtml(builder, className);
-            builder.append(")");
-        }
-
-        if (description != null) {
-            builder.append("<p>").append(description).append("</p>");
-        }
-
-        return builder.toString();
     }
 
 }
