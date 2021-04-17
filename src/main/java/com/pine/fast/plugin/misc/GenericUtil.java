@@ -9,11 +9,11 @@ import static com.intellij.openapi.util.text.StringUtil.replace;
 import static java.text.BreakIterator.getSentenceInstance;
 import static java.util.Arrays.asList;
 
+import com.intellij.application.options.CodeStyle;
 import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.pine.fast.plugin.suggestion.SuggestionNode;
 import java.text.BreakIterator;
@@ -77,8 +77,7 @@ public class GenericUtil {
 
     @NotNull
     public static String getCodeStyleIntent(InsertionContext insertionContext) {
-        final CodeStyleSettings currentSettings =
-                CodeStyleSettingsManager.getSettings(insertionContext.getProject());
+        final CodeStyleSettings currentSettings = CodeStyle.getSettings(insertionContext.getProject());
         final CommonCodeStyleSettings.IndentOptions indentOptions =
                 currentSettings.getIndentOptions(insertionContext.getFile().getFileType());
         return indentOptions.USE_TAB_CHARACTER ?

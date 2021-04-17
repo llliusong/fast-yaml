@@ -10,8 +10,6 @@
     <description>YAML code completion plugin</description>
     <change-notes/>
 
-    <idea-version since-build="172"/>
-
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
     <depends>org.jetbrains.plugins.yaml</depends>
