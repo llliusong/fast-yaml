@@ -10,6 +10,6 @@ public class YamlAnGroup extends ActionGroup {
     @NotNull
     @Override
     public AnAction[] getChildren(@Nullable AnActionEvent e) {
-        return new AnAction[]{new ReloadAction(), new OpenHitAction()};
+        return new AnAction[]{new OpenHitAction()};
     }
 }

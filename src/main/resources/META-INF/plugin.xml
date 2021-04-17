@@ -31,7 +31,8 @@
                 implementation="com.pine.fast.plugin.suggestion.completion.YamlDocumentationProvider"/>
 
 
-        <applicationService serviceImplementation="com.pine.fast.plugin.persistent.ServerPersistent"/>
+        <!--  持久化服务   -->
+        <!--  <applicationService serviceImplementation="com.pine.fast.plugin.persistent.ServerPersistent"/> -->
 
         <projectService
                 serviceInterface="com.pine.fast.plugin.suggestion.service.SuggestionService"

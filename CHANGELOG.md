@@ -1,7 +1,8 @@
 ### 2021.3.29:
   
-  - 初始化版本
+  - Code completion
   
 ### 2021.4.07:
 
-  - 支持Pycharm
+  - Support Pycharm
+  - Dynamically open/close

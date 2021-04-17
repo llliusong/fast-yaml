@@ -16,6 +16,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.pine.fast.plugin.misc.GenericUtil;
+import com.pine.fast.plugin.persistent.SystemConfig;
 import com.pine.fast.plugin.suggestion.Suggestion;
 import com.pine.fast.plugin.suggestion.SuggestionNode;
 import com.pine.fast.plugin.suggestion.completion.FileType;
@@ -119,11 +120,7 @@ public class SuggestionServiceImpl implements SuggestionService {
 
     @Override
     public boolean canProvideSuggestions(Project project, Module module) {
-        // TODO: pine 2021/4/7  持久化数据待完善
-//        ServerPersistent serverPersistent = ServerPersistent.getInstance();
-//        ServiceConfig state = serverPersistent.getState();
-//        return state == null || state.getHint() == null || state.getHint();
-        return true;
+        return SystemConfig.getHint();
     }
 
     @Override
