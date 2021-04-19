@@ -52,7 +52,7 @@ String readmeXmlAsHtml() {
     HtmlRenderer renderer = HtmlRenderer.builder().build()
     String readmeContent = new File(rootProject.uri('README.md')).text
     // since these images needs to shown from within intellij, lest put absolute urls so that the images & changelog will be visible
-    readmeContent = readmeContent.replaceAll("fast-yaml\\.gif", "http://47.110.43.11/media/fast/" + version + "/fast-yaml.gif")
+    readmeContent = readmeContent.replaceAll("fast-yaml\\.gif", "https://i.bmp.ovh/imgs/2021/04/5e38ad39e877b424.gif")
     readmeContent = readmeContent.replaceAll("CHANGELOG.md", "http://47.110.43.11/media/fast/" + version + "/CHANGELOG.md")
     Document readmeDocument = parser.parse(readmeContent)
     renderer.render(readmeDocument)

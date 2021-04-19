@@ -1,4 +1,3 @@
-## What does the plugin do
 This plugins provides the following features as of now.
 
 * Auto completion of the configuration properties in your yaml files , if your build is properly configured
