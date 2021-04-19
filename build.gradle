@@ -83,3 +83,7 @@ intellij {
     }
     updateSinceUntilBuild false
 }
+
+buildPlugin {
+    buildSearchableOptions.enabled = false
+}
